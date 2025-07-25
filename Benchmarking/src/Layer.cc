@@ -33,6 +33,16 @@ void Layer::applyLayer(Qureg &ds_qreg, int n_qubits, string &backend) {
     }
     
 };
+
+void Layer::measurement_layer(Qureg &ds_qreg, int n_qubits, string backend)
+{
+    measurement_setting.clear();
+    
+    if (backend == "Simulator")
+    {
+        measurement_simlayer(ds_qreg, n_qubits);
+    }
+};
     
 void Layer::simlayer(Qureg &ds_qreg, int n_qubits, float p1, float p2, int &angl_pos)
 {
@@ -69,6 +79,30 @@ void Layer::simlayer(Qureg &ds_qreg, int n_qubits, float p1, float p2, int &angl
     }
 };
 
+void Layer::measurement_simlayer(Qureg &ds_qreg, int qubits)
+{
+    // generate list of random measurments 
+    // 0 - X, 1 - Y, 2 - Z
+    generate_measurement_setting(measurement_setting, qubits);
+    for (int j = 0; j < qubits; j++)
+    {
+        if (measurement_setting[j] == 0)
+        {
+            // X basis measurement -- apply H
+            applyHadamard(ds_qreg, j);
+        }
+        else if (measurement_setting[j] == 1)
+        {
+            // Y basis measurement 
+            // S^dagger = RZ(-pi/2)
+            applyRotateZ(ds_qreg, j, -PI/2);
+            // H
+            applyHadamard(ds_qreg, j);
+        }
+        // Z basis measurement -- identity
+    }
+};
+
 void Layer::metrics(Qureg &ds_qreg, int n_qubits)
 {
     int dim = pow(2, n_qubits);
@@ -86,6 +120,17 @@ void Layer::metrics(Qureg &ds_qreg, int n_qubits)
     double R2d = -1 * log2(pur) / n_qubits;
 
     cout<< "purity: "<< pur <<"\n"<< "R2d: " << R2d <<"\n";
+};
+
+vector<int> Layer::getMeasurementSetting()
+{
+    cout << "Get Measurement Setting function: ";
+    for (int i = 0; i < measurement_setting.size(); i++)
+    {
+        cout << measurement_setting[i];
+    }
+    cout << "\n";
+    return measurement_setting;
 };
 
  

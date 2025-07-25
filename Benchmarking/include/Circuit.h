@@ -22,12 +22,24 @@ public:
         cout << "Create Circuit function. \n";
         for (int i = 0; i < depth; i++) {
             layer.applyLayer(ds_qreg, n_qubits, backend);
-
         }
     }
-    // measurements?
+
+    // measurement
+    void measurement(Qureg &ds_qreg, int n_qubits, string backend) {
+        cout << "Measurement function. \n";
+        layer.measurement_layer(ds_qreg, n_qubits, backend);
+    }
+
+    vector<int> getMeasurementSetting() {
+        return layer.getMeasurementSetting();
+    }
+
     // protocol
-   
+   void classicalshadows_protocol()
+   {
+        cout << "Classical Shadows Protocol function. \n";
+   }
 }; 
 
 #endif

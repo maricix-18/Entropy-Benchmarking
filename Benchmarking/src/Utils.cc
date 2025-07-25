@@ -1,6 +1,6 @@
+
 #include "Utils.h"
 
-#define PI 3.14159265358979323846
 
 void angles_generator(int qubits, int depth, vector<double> &angles_array)
 {
@@ -17,5 +17,15 @@ void angles_generator(int qubits, int depth, vector<double> &angles_array)
         double r = 2 * PI * genrand_res53();
         //printf("Random[%d] = %.17f\n", i, r);
         angles_array.push_back(r);
+    }
+}
+
+void generate_measurement_setting(vector<int> &measurement_setting, int qubits)
+{
+    // measurement setting
+    for (int i = 0; i < qubits; i++) {
+        int basis = genrand_int32() % 3; // 0, 1, or 2 (X ,Y, Z basis)
+        //cout << "Measurement setting for qubit " << i << ": " << basis << "\n";
+        measurement_setting.push_back(basis);
     }
 }

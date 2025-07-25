@@ -14,15 +14,15 @@ set(QuEST_DIR "${CMAKE_SOURCE_DIR}/../QuEST")
 set(QuEST_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/../QuEST/build")
 
 # link libQuest.so
-link_directories(entropy_benchmarking PUBLIC 
-${QuEST_LIBRARY_DIR}
-)
+link_directories(entropy_benchmarking PUBLIC ${QuEST_LIBRARY_DIR})
 
 # executable
 add_executable(entropy_benchmarking 
 ${MAIN_DIR}/main.cc
 ${MAIN_DIR}/Layer.cc
 ${MAIN_DIR}/Utils.cc
+${MAIN_DIR}/DensityMatrix.cc
+${MAIN_DIR}/ClassicalShadows.cc
 ${MAIN_DIR}/mt19937ar.c
 )
 

@@ -1,13 +1,18 @@
 #include <iostream>
 #include <string>
-#include "Circuit.h"
-#include "quest.h"
+#include "DensityMatrix.h"
+#include "ClassicalShadows.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
-  int protocol; 
+  int protocol;
+  int qubits = 5;
+  int depth = 4;
 
+  string backend;
+  int backend_choice;
+  
   cout << "Hello, Entropy Benchmarking!" << endl;
     
   cout << " Choose a simulation or protocol:" << endl;
@@ -17,32 +22,29 @@ int main(int argc, char* argv[]) {
   cout << " Input the number of the protocol you want to use: ";
   cin >> protocol;
 
-  cout << "Create Q Environment\n";
-  if (isQuESTEnvInit() == 0)
-    initQuESTEnv();
-  cout << "Create Q Register\n";
-  Qureg ds_qreg = createDensityQureg(4);
-  string backend = "Simulator";
-  int qubits = 2;
-  int depth = 15;
+  cout << " Choose Backend: " << endl;
+  cout << " 1 Simulator" << endl; 
+  cin >> backend_choice;
 
-  Circuit<Layer> mydensitymatrix(qubits, depth);
-
-  mydensitymatrix.createCircuit(ds_qreg, qubits, depth, backend);
+  if (backend_choice == 1) {
+    backend = "Simulator";
+  } else {
+    cout << "Invalid choice, defaulting to Simulator." << endl;
+    backend = "Simulator";
+  }
 
   switch(protocol) {
     case 1:
       cout << "Density Matrix ." << endl;
-      
+      densitymatrix_protocol(qubits, depth, backend);
       break;
     case 2:
       cout << "Classical Shadows protocol." << endl;
+      classicalshadows_protocol(qubits, depth, backend);
       break;
     case 3    :
       cout << "Swap Test protocol." << endl;
+      cout<< "This protocol is not implemented yet." << endl;
   }
-
-  cout << "Destroy Q Register\n";
-  destroyQureg(ds_qreg);
   return 0;
 }
