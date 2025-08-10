@@ -20,6 +20,10 @@ else
     cd build
     cmake ..
     make 
+
+    # for Windows using x64 VS Developer CMD
+    #cmake .. -G "NMake Makefiles" -DCMAKE_CXX_FLAGS="/arch:AVX2"
+    #nmake
     # out of build directory
     cd ..
 fi
@@ -44,3 +48,5 @@ cd ..
 
 # out of Benchmarking directory
 cd ..
+
+## need to get eigen for VnD

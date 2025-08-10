@@ -36,12 +36,13 @@ void Layer::applyLayer(Qureg &ds_qreg, int n_qubits, string &backend) {
 
 void Layer::measurement_layer(Qureg &ds_qreg, int n_qubits, string backend)
 {
-    measurement_setting.clear();
     
     if (backend == "Simulator")
     {
         measurement_simlayer(ds_qreg, n_qubits);
     }
+
+    measurement_setting.clear();
 };
     
 void Layer::simlayer(Qureg &ds_qreg, int n_qubits, float p1, float p2, int &angl_pos)
@@ -83,10 +84,12 @@ void Layer::measurement_simlayer(Qureg &ds_qreg, int qubits)
 {
     for (int j = 0; j < qubits; j++)
     {
+        cout<< "Applying meas " << measurement_setting[j]<< " on qubit " << j <<endl;
         if (measurement_setting[j] == 0)
         {
             // X basis measurement -- apply H
             applyHadamard(ds_qreg, j);
+            cout<< "applied hadamard"<<endl;
         }
         else if (measurement_setting[j] == 1)
         {
@@ -98,6 +101,7 @@ void Layer::measurement_simlayer(Qureg &ds_qreg, int qubits)
         }
         // Z basis measurement -- identity
     }
+    cout<<"measuremnt for sim layer applied"<<endl;
 };
 
 void Layer::metrics(Qureg &ds_qreg, int n_qubits)

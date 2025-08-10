@@ -5,11 +5,14 @@
 #define CLASSICALSHADOWS_H
 #include <iostream>
 #include <string>
-#include <bits/stdc++.h>
+//#include <bits/stdc++.h>
+//#include <random>
+#include <map>
+#include <vector>
 #include "Circuit.h"
 #include "quest.h"
 
-using namespace std;
+//using namespace std;
 
 map<string, vector<double>> beta_values();
 
