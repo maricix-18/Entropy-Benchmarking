@@ -31,15 +31,10 @@ public:
         layer.measurement_layer(ds_qreg, n_qubits, backend);
     }
 
-    vector<int> getMeasurementSetting() {
-        return layer.getMeasurementSetting();
+    vector<int> getMeasurementSetting(int qubits) {
+        return layer.getMeasurementSetting(qubits);
     }
 
-    // protocol
-   void classicalshadows_protocol()
-   {
-        cout << "Classical Shadows Protocol function. \n";
-   }
 }; 
 
 #endif

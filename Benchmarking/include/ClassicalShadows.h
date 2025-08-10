@@ -11,6 +11,8 @@
 
 using namespace std;
 
+map<string, vector<double>> beta_values();
+
 void classicalshadows_protocol(int qubits, int depth, string backend);
 
 #endif

@@ -81,9 +81,6 @@ void Layer::simlayer(Qureg &ds_qreg, int n_qubits, float p1, float p2, int &angl
 
 void Layer::measurement_simlayer(Qureg &ds_qreg, int qubits)
 {
-    // generate list of random measurments 
-    // 0 - X, 1 - Y, 2 - Z
-    generate_measurement_setting(measurement_setting, qubits);
     for (int j = 0; j < qubits; j++)
     {
         if (measurement_setting[j] == 0)
@@ -122,8 +119,12 @@ void Layer::metrics(Qureg &ds_qreg, int n_qubits)
     cout<< "purity: "<< pur <<"\n"<< "R2d: " << R2d <<"\n";
 };
 
-vector<int> Layer::getMeasurementSetting()
+vector<int> Layer::getMeasurementSetting(int qubits)
 {
+    // generate list of random measurments 
+    // 0 - X, 1 - Y, 2 - Z
+    generate_measurement_setting(measurement_setting, qubits);
+
     cout << "Get Measurement Setting function: ";
     for (int i = 0; i < measurement_setting.size(); i++)
     {

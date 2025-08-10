@@ -37,7 +37,7 @@ class Layer {
 
     void metrics(Qureg &ds_qreg, int dim);
 
-    vector<int> getMeasurementSetting();
+    vector<int> getMeasurementSetting(int qubits);
 };
 
 #endif
