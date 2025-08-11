@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
   int protocol;
   int qubits = 5;
-  int depth = 4;
+  int depth = 15;
 
   string backend;
   int backend_choice;
@@ -40,7 +40,11 @@ int main(int argc, char* argv[]) {
       break;
     case 2:
       cout << "Classical Shadows protocol." << endl;
-      classicalshadows_protocol(qubits, depth, backend);
+      for (int d = 0; d < depth ; d++)
+      {
+          cout<< "Protocol for depth "<< d<<endl;
+          classicalshadows_protocol(qubits, d, backend);
+      }
       break;
     case 3    :
       cout << "Swap Test protocol." << endl;

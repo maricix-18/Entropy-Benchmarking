@@ -7,6 +7,7 @@
 #include <string>
 //#include <bits/stdc++.h>
 //#include <random>
+#include <numeric>
 #include <map>
 #include <vector>
 #include "Circuit.h"

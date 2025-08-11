@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.28)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 project(entropy_benchmarking
   DESCRIPTION "Entropy Benchmarking using QuEST"
   LANGUAGES CXX C
@@ -9,9 +12,10 @@ set(MAIN_DIR "${CMAKE_SOURCE_DIR}/src")
 set(MAIN_H "${CMAKE_SOURCE_DIR}/include")
 
 # quest header file directory, build dir
+set(QuEST_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/../QuEST/build")
 set(QuEST_H "${QuEST_LIBRARY_DIR}/include")
 set(QuEST_DIR "${CMAKE_SOURCE_DIR}/../QuEST")
-set(QuEST_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/../QuEST/build")
+
 
 # link libQuest.so
 link_directories(entropy_benchmarking PUBLIC ${QuEST_LIBRARY_DIR})
@@ -32,10 +36,13 @@ target_include_directories(entropy_benchmarking PUBLIC
 "${QuEST_LIBRARY_DIR}/include" # quest.h
 "${CMAKE_SOURCE_DIR}/include" # this project header files 
 "${QuEST_DIR}"
+"../json/include"
 )
 
-# https://eigen.tuxfamily.org/index.php?title=Main_Page#Overview 
+# https://eigen.tuxfamily.org/index.php?title=Main_Page#Overview
+# build beforehand
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
 
 #link QuEST library
 target_link_libraries(entropy_benchmarking QuEST Eigen3::Eigen)

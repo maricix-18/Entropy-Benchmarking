@@ -3,8 +3,17 @@
 #!/bin/bash
 
 # run executable
-./Benchmarking/build/entropy_benchmarking
+# ./Benchmarking/build/entropy_benchmarking
 
+cd Bechmarking
+rmdir /s /q build
+
+mkdir build
+cd build
+cmake ..
+msbuild entropy_benchmarking.sln
+
+Debug\entropy_benchmarking.exe
 # run on windows
 # cmake ..
 # msbuild .sln file

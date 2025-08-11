@@ -29,7 +29,7 @@ void Layer::applyLayer(Qureg &ds_qreg, int n_qubits, string &backend) {
         //p2 = (15 * p2 / 16.0); // scale for quest function
         //cout << "Apply sim layer. \n";
         simlayer(ds_qreg, n_qubits, p1, p2, angl_pos);
-        metrics(ds_qreg,n_qubits);
+        //metrics(ds_qreg,n_qubits);
     }
     
 };
@@ -84,12 +84,12 @@ void Layer::measurement_simlayer(Qureg &ds_qreg, int qubits)
 {
     for (int j = 0; j < qubits; j++)
     {
-        cout<< "Applying meas " << measurement_setting[j]<< " on qubit " << j <<endl;
+        //cout<< "Applying meas " << measurement_setting[j]<< " on qubit " << j <<endl;
         if (measurement_setting[j] == 0)
         {
             // X basis measurement -- apply H
             applyHadamard(ds_qreg, j);
-            cout<< "applied hadamard"<<endl;
+            //cout<< "applied hadamard"<<endl;
         }
         else if (measurement_setting[j] == 1)
         {
@@ -101,7 +101,7 @@ void Layer::measurement_simlayer(Qureg &ds_qreg, int qubits)
         }
         // Z basis measurement -- identity
     }
-    cout<<"measuremnt for sim layer applied"<<endl;
+    //cout<<"measuremnt for sim layer applied"<<endl;
 };
 
 void Layer::metrics(Qureg &ds_qreg, int n_qubits)
@@ -129,12 +129,12 @@ vector<int> Layer::getMeasurementSetting(int qubits)
     // 0 - X, 1 - Y, 2 - Z
     generate_measurement_setting(measurement_setting, qubits);
 
-    cout << "Get Measurement Setting function: ";
-    for (int i = 0; i < measurement_setting.size(); i++)
-    {
-        cout << measurement_setting[i];
-    }
-    cout << "\n";
+    // cout << "Get Measurement Setting function: ";
+    // for (int i = 0; i < measurement_setting.size(); i++)
+    // {
+    //     cout << measurement_setting[i];
+    // }
+    // cout << "\n";
     return measurement_setting;
 };
 

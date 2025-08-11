@@ -27,7 +27,7 @@ public:
 
     // measurement
     void measurement(Qureg &ds_qreg, int n_qubits, string backend) {
-        cout << "Measurement function. \n";
+        //cout << "Measurement function. \n";
         layer.measurement_layer(ds_qreg, n_qubits, backend);
     }
 
