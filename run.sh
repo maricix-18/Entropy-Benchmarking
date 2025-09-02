@@ -6,14 +6,17 @@
 # ./Benchmarking/build/entropy_benchmarking
 
 cd Bechmarking
-rmdir /s /q build
+rm -rf build
 
 mkdir build
 cd build
 cmake ..
-msbuild entropy_benchmarking.sln
+make
 
-Debug\entropy_benchmarking.exe
+entropy_benchmarking
+
+cd ..
+cd ..
 # run on windows
 # cmake ..
 # msbuild .sln file

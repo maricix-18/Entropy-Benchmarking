@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(entropy_benchmarking
@@ -8,34 +8,36 @@ project(entropy_benchmarking
   LANGUAGES CXX C
   )
 
-set(MAIN_DIR "${CMAKE_SOURCE_DIR}/src")
+set(MAIN_SRC "${CMAKE_SOURCE_DIR}/src")
 set(MAIN_H "${CMAKE_SOURCE_DIR}/include")
 
+set(QuEST "${CMAKE_SOURCE_DIR}/../QuEST")
+
 # quest header file directory, build dir
-set(QuEST_LIBRARY_DIR "${CMAKE_SOURCE_DIR}/../QuEST/build")
-set(QuEST_H "${QuEST_LIBRARY_DIR}/include")
-set(QuEST_DIR "${CMAKE_SOURCE_DIR}/../QuEST")
-
-
-# link libQuest.so
-link_directories(entropy_benchmarking PUBLIC ${QuEST_LIBRARY_DIR})
+set(QuEST_build "${QuEST}/build/include")
+set(QuEST_lib "${QuEST}/build")
+set(QuEST_q "${QuEST}")
 
 # executable
 add_executable(entropy_benchmarking 
-${MAIN_DIR}/main.cc
-${MAIN_DIR}/Layer.cc
-${MAIN_DIR}/Utils.cc
-${MAIN_DIR}/DensityMatrix.cc
-${MAIN_DIR}/ClassicalShadows.cc
-${MAIN_DIR}/mt19937ar.c
+ src/main.cc
+ src/Backend.cc
+ src/Protocol.cc
+ src/mt19937ar.c
+ src/Backends/Simulator.cc
+ src/Protocols/DensityMatrix.cc
+ src/Protocols/ClassicalShadows.cc
 )
 
 # header files
 target_include_directories(entropy_benchmarking PUBLIC 
-"${QuEST_H}" # other quest header files
-"${QuEST_LIBRARY_DIR}/include" # quest.h
 "${CMAKE_SOURCE_DIR}/include" # this project header files 
-"${QuEST_DIR}"
+"${CMAKE_SOURCE_DIR}/include/Backends" # backends header files
+"${CMAKE_SOURCE_DIR}/include/Protocols"
+"${QuEST_lib}"
+"${QuEST}" 
+"${QuEST_build}" 
+"${QuEST_q}"
 "../json/include"
 )
 
@@ -43,6 +45,5 @@ target_include_directories(entropy_benchmarking PUBLIC
 # build beforehand
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
-
 #link QuEST library
-target_link_libraries(entropy_benchmarking QuEST Eigen3::Eigen)
+target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib"  Eigen3::Eigen)
