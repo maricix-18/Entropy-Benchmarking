@@ -20,15 +20,29 @@ else
     cd build
     cmake ..
     make 
-
-    # for Windows using x64 VS Developer CMD
-    #cmake .. -G "NMake Makefiles" -DCMAKE_CXX_FLAGS="/arch:AVX2"
-    #nmake
-    # out of build directory
     cd ..
 fi
-# out of QuEST directory
 cd ..
+
+
+# get json lib for cpp
+if [ ! -d "json" ]; then
+    echo "Cloning json repository..."
+    git clone https://github.com/nlohmann/json.git
+
+else
+    echo "json directory already exists."
+fi
+
+
+# get eigen lib for cpp
+if [ ! -d "eigen" ]; then
+    echo "Cloning eigen repository..."
+    git clone https://gitlab.com/libeigen/eigen.git
+
+else
+    echo "eigen directory already exists."
+fi
 
 # check if Benchmarking is built
 cd Benchmarking
@@ -49,4 +63,5 @@ cd ..
 # out of Benchmarking directory
 cd ..
 
-## need to get eigen for VnD
+echo "All done."
+
