@@ -32,7 +32,7 @@ void  ClassicalShadows::metrics()
         }
 
         //median of means
-        int mid = means.size() / 2;
+        int mid = int(means.size() / 2);
         nth_element(means.begin(), means.begin() + mid, means.end());
         double mom = means[mid]; // purity val
         double R2d = (-1 * log2(mom)) / _qubits; // R2d val
