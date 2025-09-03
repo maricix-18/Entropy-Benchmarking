@@ -12,3 +12,7 @@ run.bat
 ## verisons
 cmake - 3.10\
 C++ - at least 14
+
+## src/main
+for setting qubit and depth value for now\
+uncomment to get data for multiple depth sizes

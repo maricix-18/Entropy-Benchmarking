@@ -9,8 +9,10 @@ void  ClassicalShadows::metrics()
 {
     cout << fixed;
     cout << setprecision(17);
-    beta_vals();
-    // for n samples do this
+
+    beta_vals_paulibasis(); // if pauli basis measurements are used 
+
+    // for n samples do the protocol
     for (int n = 0; n < samples; n++)
     {
         cout << "Gather Shadows for sample: " << n <<endl;;
@@ -20,7 +22,6 @@ void  ClassicalShadows::metrics()
 
         // apply Classical Shadows protocol
         cout << "Apply Classical Shadows Protocol\n";
-
         cout<< "Subgroups: "<< M_subgroup << endl;
 
         classicalShadows_protocol();
@@ -31,14 +32,16 @@ void  ClassicalShadows::metrics()
             cout << m <<endl;
         }
 
-        //median of means
+        //median of means - get the middle val
         int mid = int(means.size() / 2);
         nth_element(means.begin(), means.begin() + mid, means.end());
         double mom = means[mid]; // purity val
         double R2d = (-1 * log2(mom)) / _qubits; // R2d val
 
         cout << "Classical Shadows Protocol completed.\n";
+
         cout << "Median of means: " << mom << " R2d " << R2d << endl;
+
         // gether list of samples
         pur_samples.push_back(mom);
         R2d_samples.push_back(R2d);
@@ -46,8 +49,10 @@ void  ClassicalShadows::metrics()
         // clear 
         shadow_map.clear();
         means.clear();
+
     }// samples end
 
+    // Compute metrics
     // mean purity
     double sum = accumulate(pur_samples.begin(), pur_samples.end(), 0.0);
     double pur_mean = sum / pur_samples.size();
@@ -77,9 +82,12 @@ void  ClassicalShadows::metrics()
 };
 
 void ClassicalShadows::classicalShadows_protocol() { 
-
+    // details are in this paper https://arxiv.org/pdf/2412.18007
+    // noting the data referencing them
+    // Eq. B19 
     for (int i = 0; i < groups; i++)
     {
+        // Get list of shadows of current group
         // cout << "Inside group: "<< i << endl;
         int start_idx = i * M_subgroup;
         int end_idx = (i + 1) * M_subgroup;
@@ -89,15 +97,15 @@ void ClassicalShadows::classicalShadows_protocol() {
             end_idx = map_size;
         }
 
-        // Create iterators to start and end positions
         auto start_it = shadow_map.begin();
-        std::advance(start_it, start_idx);
+        advance(start_it, start_idx);
 
         auto end_it = shadow_map.begin();
-        std::advance(end_it, end_idx);
+        advance(end_it, end_idx);
 
-        // Now copy the range [start_it, end_it) into a vector of pairs
+        // store the respective group in a list
         Shadow_list shadow_list(start_it, end_it);
+
         // printing purposes 
         // if (verbose) {
         //    // cout << "\n Sublist of shadows considered is : \n";
@@ -111,9 +119,11 @@ void ClassicalShadows::classicalShadows_protocol() {
         // }
 
         double purity = 0.0;
-
+        // Basically you do a product between each measurement settings outcomes
+        // with the other measurement settings outcome in the same group
+        // Because we have pauli basis measurements, we have a beta_values lists 
+        // which already stores the possible values based on what pauli basis was used 
         for (int m1 = 0; m1 < M_subgroup; m1++) {
-            //if (verbose) cout << "========================================================\n";
             //if (verbose) cout << "Random unitary index m1 = " << m1 << endl;
             //cout << "Shadow list size " << shadow_list.size() << endl;
 
@@ -131,7 +141,7 @@ void ClassicalShadows::classicalShadows_protocol() {
                 vector<vector<double>> beta_items(_qubits);
                 for (int n = 0; n < _qubits; ++n) {
                     string key = to_string(m_description_1[n]) + to_string(m_description_2[n]);
-                    beta_items[n] = beta_values[key];
+                    beta_items[n] = beta_values[key]; // (Table I)
                 }
 
                 
@@ -171,12 +181,12 @@ void ClassicalShadows::classicalShadows_protocol() {
                         trace_prod_shadows += nb_times_outcome_1 * nb_times_outcome_2 * prod_over_num_qubits;
                     }
                 }
-                //cout<<"Trace prod per subgroup: " << trace_prod_shadows<<endl;
-                purity += K_factor * trace_prod_shadows;
+                // cout<<"Trace prod per subgroup: " << trace_prod_shadows<<endl;
+                purity += K_factor * trace_prod_shadows; // Eq. B7
                 // cout << "Purity: "<<purity<<endl;
             }
         }
-        purity *= M_factor;
+        purity *= M_factor; // Eq. B19
         means.push_back(purity);
     }
 };
@@ -197,7 +207,6 @@ void ClassicalShadows::gatherShadows() {
             backend->applyLayer(clone, _qubits, angles_array);
             
 
-           // cout<<"Gen prob distribution\n";
             // get prob distribution
             long long dim = 1LL << _qubits; // number of basis states
             for (long long i = 0; i < dim; i++) {
@@ -208,6 +217,7 @@ void ClassicalShadows::gatherShadows() {
                 //         std::cout << ((i >> q) & 1);
                 //     std::cout << ": " << prob << std::endl;
             }
+
             // no need for clone anymore
             //cout << "Destroy Clone Q Register\n";
             destroyQureg(clone);
@@ -237,20 +247,19 @@ void ClassicalShadows::gatherShadows() {
             shadow_map.insert({key,counts});
             prob_dist.clear();
             counts.clear();
-            //shadow_map[key] = counts;
         }
 };
 
-void ClassicalShadows::beta_vals()
+void ClassicalShadows::beta_vals_paulibasis()
 {
     for(int i = 0; i < 3; i++) //i=0/1/2 corresponds to H/HSdag/Id
         for(int j = 0; j < 3; j++) //j=0/1/2 corresponds to H/HSdag/Id
             {   
                 string key = to_string(i) + to_string(j);
                 if (i != j)
-                    beta_values[key] = {1.0/2.0, 1.0/2.0}; //the first (resp. second) element corresponds to two identical (resp. different) outcomes
+                    beta_values[key] = {1.0/2.0, 1.0/2.0}; //two identical outcomes
                 else
-                    beta_values[key] = {5.0, -4.0};
+                    beta_values[key] = {5.0, -4.0}; // different outcomes
             }
 };
 
@@ -276,14 +285,12 @@ void ClassicalShadows::saveMetrics()
     if (stat(filename.c_str(), &buffer) == 0) {
         ifstream in(filename);
         if (in.is_open()) {
-            // read your data here
-            std::cout << "File opened for reading.\n";
+            cout << "File opened for reading.\n";
         }
     } else {
         ofstream out(filename);
         if (out.is_open()) {
-            // create or write initial content here
-            std::cout << "File created.\n";
+            cout << "File created.\n";
         }
     }
 
@@ -302,5 +309,5 @@ void ClassicalShadows::saveMetrics()
     
     ofstream out(filename);
     if (out.is_open())
-        out << std::setw(4) << j << std::endl;
+        out << setw(4) << j << endl;
 };
