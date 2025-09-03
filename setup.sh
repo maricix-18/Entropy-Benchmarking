@@ -25,7 +25,7 @@ fi
 cd ..
 
 
-# get json lib for cpp
+# get json lib for cpp - no need to build
 if [ ! -d "json" ]; then
     echo "Cloning json repository..."
     git clone https://github.com/nlohmann/json.git
@@ -35,7 +35,7 @@ else
 fi
 
 
-# get eigen lib for cpp
+# get eigen lib for cpp - no need to build
 if [ ! -d "eigen" ]; then
     echo "Cloning eigen repository..."
     git clone https://gitlab.com/libeigen/eigen.git
