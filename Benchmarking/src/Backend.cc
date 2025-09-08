@@ -7,7 +7,7 @@ void Backend::some_backendfunc()
     cout << "Backend function called." << endl;
 };
 
-void Backend::applyLayer(Qureg &ds_qreg, int &qubits, vector<double> &angles_array)
+void Backend::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array)
 {
     cout << "Applying layer in Backend." << endl;
 };

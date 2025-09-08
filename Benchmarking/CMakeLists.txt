@@ -27,23 +27,21 @@ add_executable(entropy_benchmarking
  src/Backends/Simulator.cc
  src/Protocols/DensityMatrix.cc
  src/Protocols/ClassicalShadows.cc
+ src/Protocols/Swap.cc
 )
 
 # header files
 target_include_directories(entropy_benchmarking PUBLIC 
 "${CMAKE_SOURCE_DIR}/include" # this project header files 
 "${CMAKE_SOURCE_DIR}/include/Backends" # backends header files
-"${CMAKE_SOURCE_DIR}/include/Protocols"
+"${CMAKE_SOURCE_DIR}/include/Protocols" # protocol header files
 "${QuEST_lib}"
 "${QuEST}" 
 "${QuEST_build}" 
 "${QuEST_q}"
 "../json/include"
+"../eigen"
 )
 
-# https://eigen.tuxfamily.org/index.php?title=Main_Page#Overview
-# build beforehand
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-
 #link QuEST library
-target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib"  Eigen3::Eigen)
+target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib")

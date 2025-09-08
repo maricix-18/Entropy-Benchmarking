@@ -191,7 +191,6 @@ void ClassicalShadows::classicalShadows_protocol() {
     }
 };
 
-
 void ClassicalShadows::gatherShadows() { 
 
     for (int j = 0; j < num_measurements; j++)
@@ -204,8 +203,8 @@ void ClassicalShadows::gatherShadows() {
             // use clone to apply measurements
             Qureg clone;
             clone = createCloneQureg(ds_qreg);
-            backend->applyLayer(clone, _qubits, angles_array);
-            
+            //backend->applyLayer(clone, _qubits, angles_array);
+            backend->measurementLayer(clone, _qubits, key);
 
             // get prob distribution
             long long dim = 1LL << _qubits; // number of basis states

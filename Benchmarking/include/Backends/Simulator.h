@@ -16,7 +16,7 @@ class Simulator : public Backend
     
     void some_backendfunc() override;
 
-    void applyLayer(Qureg &ds_qreg, int &qubits, vector<double> &angles_array) override;
+    void applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array) override;
 
     void measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis) override;
 

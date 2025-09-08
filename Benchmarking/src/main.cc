@@ -6,6 +6,7 @@
 #include "Protocol.h"
 #include "DensityMatrix.h"
 #include "ClassicalShadows.h"
+#include "Swap.h"
 
 using namespace std;
 
@@ -55,17 +56,21 @@ int main(int argc, char* argv[]) {
     else if (protocol == 3)
     {
         cout << "Swap Test protocol." << endl;
-        cout<< "This protocol is not implemented yet." << endl;
+        protocol_ptr = make_unique<Swap>();
+        string prot = "Swap";
+        protocol_ptr->setProtocol(prot);
     }
     else 
     {
         cout << "Invalid choice." << endl;
     }
    
+    int st = 0;
+    int fn = qubits;
     // comment this out if you want multiple depths
     protocol_ptr->setBackend(*backend_ptr);
     protocol_ptr->init(qubits, depth);
-    protocol_ptr->buildCircuit();
+    protocol_ptr->buildCircuit(st, fn);
     protocol_ptr->metrics();
     protocol_ptr->saveMetrics();
     protocol_ptr->destroy();

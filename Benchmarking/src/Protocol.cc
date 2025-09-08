@@ -5,6 +5,11 @@ void Protocol::setBackend(Backend &_backend) {
     backend = &_backend;// Point the base class Backend pointer to the eg simulatr obj
 };
 
+void Protocol::setProtocol(string &ptr)
+{
+    this_prot = ptr;
+};
+
 void Protocol::somefunc()
 {
     cout << "Protocol function called." << endl;
@@ -21,19 +26,28 @@ void Protocol::init(int &qubits, int &depth)
     if (isQuESTEnvInit() == 0)
         initQuESTEnv();
     
-    cout << "Create Q Register\n";
-    this->ds_qreg = createDensityQureg(_qubits);
+    if (this_prot == "Swap")
+    {
+        cout << "Create Swap Register\n";
+        ds_qreg = createDensityQureg(2*_qubits);
+    }
+    else{
+        cout << "Create Q Register\n";
+        this->ds_qreg = createDensityQureg(_qubits);
+    }
+   
 
     //generate the angles for the circuit
     angles_generator();
 
 };
 
-void Protocol::buildCircuit()
+void Protocol::buildCircuit(int &st_qubit, int &fn_qubit)
 {
+   
     for (int d = 0; d < this->_depth; d++)
     {
-        backend->applyLayer(this->ds_qreg, this->_qubits, this->angles_array);
+        backend->applyLayer(this->ds_qreg, st_qubit, fn_qubit, angles_array);
     }
     
 };

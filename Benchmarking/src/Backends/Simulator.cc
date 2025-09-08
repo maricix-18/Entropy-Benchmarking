@@ -4,13 +4,13 @@ void Simulator::some_backendfunc() {
     cout << "Simulator backend function called." << endl;
 };
 
-void Simulator::applyLayer(Qureg &ds_qreg, int &qubits, vector<double> &angles_array)
+void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array)
 {
-    cout << "Simulator::applyLayer called with " << qubits << " qubits." << endl;
+    cout << "Simulator::applyLayer called from q " << st_qubit << " to q " << fn_qubit - 1<< endl;
     int angl_pos = 0;
     //cout<< "Appyling sim layer. \n";
     // rx + noise, ry + noise, cz + noise
-    for (int q = 0; q < qubits; q++)
+    for (int q = st_qubit; q < fn_qubit; q++)
     {
         //cout << "Angle pos: " << angl_pos <<"\n";
         //cout<<"rx gate: Angle = "<<angles_array[angl_pos]<<", Applied to q[" << j <<"\n";
@@ -20,7 +20,7 @@ void Simulator::applyLayer(Qureg &ds_qreg, int &qubits, vector<double> &angles_a
     }
 
     // for each layer add y rotation on all qubits
-    for (int q = 0; q < qubits; q++)
+    for (int q = st_qubit; q < fn_qubit; q++)
     {
         //cout << "Angle pos: " << angl_pos <<"\n";
         //cout<<"ry gate: Angle = "<<angles_array[angl_pos]<<", Applied to q[" << j <<"\n";
@@ -32,7 +32,7 @@ void Simulator::applyLayer(Qureg &ds_qreg, int &qubits, vector<double> &angles_a
     // for each layer add 2x cz layer on nearest neighbour qubits
     for (int q2 = 0; q2 < 2; q2++)
     {
-        for (int q = q2; q < qubits-1; q+=2)
+        for (int q = q2; q < fn_qubit-1; q+=2)
         {
            // cout<<"cz gate applied to control " << j <<" target: "<<j+1 <<"\n";
             applyControlledPauliZ(ds_qreg, q, q+1);

@@ -18,6 +18,7 @@ using namespace std;
 class Protocol
 {
  protected:
+    string this_prot;
     Backend* backend; // pointer to base class Backend
     Qureg ds_qreg;
     int _qubits;
@@ -33,7 +34,9 @@ class Protocol
 
    void setBackend(Backend &_backend);
 
-   void buildCircuit();
+   void setProtocol(string &ptr);
+
+   void buildCircuit(int &st_qubit, int &fn_qubit);
 
    virtual void measurement();
    

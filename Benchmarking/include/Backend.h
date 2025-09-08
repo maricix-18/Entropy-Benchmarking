@@ -14,7 +14,7 @@ class Backend
 
     virtual void some_backendfunc();
 
-    virtual void applyLayer(Qureg &ds_qreg, int &qubits, vector<double> &angles_array);
+    virtual void applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array);
 
     virtual void measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis);
     
