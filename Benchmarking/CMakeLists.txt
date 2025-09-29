@@ -44,4 +44,6 @@ target_include_directories(entropy_benchmarking PUBLIC
 )
 
 #link QuEST library
-target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib")
+#target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib"  Eigen3::Eigen)
+
+target_link_libraries(entropy_benchmarking "${QuEST_lib}/libQuEST.so")

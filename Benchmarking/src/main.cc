@@ -11,8 +11,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 2;
-    int depth = 3;
+    int qubits = 3;
+    int depth = 15;
 
     int backend_choice;
     int protocol;
@@ -67,26 +67,27 @@ int main(int argc, char* argv[]) {
    
     int st = 0;
     int fn = qubits;
-    // comment this out if you want multiple depths
     protocol_ptr->setBackend(*backend_ptr);
-    protocol_ptr->init(qubits, depth);
-    protocol_ptr->buildCircuit(st, fn);
-    protocol_ptr->metrics();
-    protocol_ptr->saveMetrics();
-    protocol_ptr->destroy();
+
+    // comment this out if you want multiple depths
+    // protocol_ptr->init(qubits, depth);
+    // protocol_ptr->buildCircuit(st, fn);
+    // protocol_ptr->metrics();
+    // protocol_ptr->saveMetrics();
+    // protocol_ptr->destroy();
 
     // for multiple depths
     // otherwise only one last depth is stored
 
-    // for (int d =0; d<depth; d++)
-    // {
-    //     cout << "-Depth " << d << endl;
-    //     protocol_ptr->init(qubits, d);
-    //     protocol_ptr->buildCircuit();
-    //     protocol_ptr->metrics();
-    //     protocol_ptr->saveMetrics();
-    //     protocol_ptr->destroy();
-    // }
+    for (int d =0; d<depth; d++)
+    {
+        cout << "-Depth " << d << endl;
+        protocol_ptr->init(qubits, d);
+        protocol_ptr->buildCircuit(st, fn);
+        protocol_ptr->metrics();
+        protocol_ptr->saveMetrics();
+        protocol_ptr->destroy();
+    }
    
     return 0;
 }

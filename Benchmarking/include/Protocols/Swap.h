@@ -51,7 +51,7 @@ protected:
 
     double estimate_purity_from_swap_test(map<string, int> &counts);
 
-    int swap_test_outcome(const string &outcome);
+    int swap_test_outcome(string &outcome);
 
     int parity_bit(string& bitstring);
 

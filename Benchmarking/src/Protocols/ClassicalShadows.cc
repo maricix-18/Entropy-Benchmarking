@@ -156,16 +156,9 @@ void ClassicalShadows::classicalShadows_protocol() {
                         double prod_over_num_qubits = 1.0;
 
                         for (int n = 0; n < _qubits; ++n) {
-                            int t = _qubits - 1 - n;
-
                             char nth_bit_from_outcome_1, nth_bit_from_outcome_2;
-                            if (circuit_bool) {
-                                nth_bit_from_outcome_1 = outcome_1[t];
-                                nth_bit_from_outcome_2 = outcome_2[t];
-                            } else {
-                                nth_bit_from_outcome_1 = outcome_1[n];
-                                nth_bit_from_outcome_2 = outcome_2[n];
-                            }
+                            nth_bit_from_outcome_1 = outcome_1[n];
+                            nth_bit_from_outcome_2 = outcome_2[n];
 
                             double beta;
                             if (nth_bit_from_outcome_1 == nth_bit_from_outcome_2)
@@ -191,6 +184,7 @@ void ClassicalShadows::classicalShadows_protocol() {
     }
 };
 
+
 void ClassicalShadows::gatherShadows() { 
 
     for (int j = 0; j < num_measurements; j++)
@@ -203,10 +197,9 @@ void ClassicalShadows::gatherShadows() {
             // use clone to apply measurements
             Qureg clone;
             clone = createCloneQureg(ds_qreg);
-            //backend->applyLayer(clone, _qubits, angles_array);
             backend->measurementLayer(clone, _qubits, key);
 
-            // get prob distribution
+            // get prob distribution of current measurement setting
             long long dim = 1LL << _qubits; // number of basis states
             for (long long i = 0; i < dim; i++) {
                 qreal prob = calcProbOfBasisState(clone, i);
@@ -216,9 +209,8 @@ void ClassicalShadows::gatherShadows() {
                 //         std::cout << ((i >> q) & 1);
                 //     std::cout << ": " << prob << std::endl;
             }
-
             // no need for clone anymore
-            //cout << "Destroy Clone Q Register\n";
+            // cout << "Destroy Clone Q Register\n";
             destroyQureg(clone);
 
             // for sampling
@@ -232,7 +224,7 @@ void ClassicalShadows::gatherShadows() {
                 // each shot samples a bitstring
                 int sample = d(gen);
                 string bitstring;
-                for (int q = _qubits - 1; q >= 0; --q)
+                for (int q = 0; q < _qubits; q++)
                     bitstring += ((sample >> q) & 1) ? '1' : '0';
                 counts[bitstring]++;
                 

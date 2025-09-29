@@ -139,14 +139,14 @@ int Swap::parity_bit(string& bitstring) {
     return count % 2;
 };
 
-int Swap::swap_test_outcome(const string &outcome)
+int Swap::swap_test_outcome(string &outcome)
 {
     size_t num_qubits = outcome.length() / 2;
 
     string str1 = outcome.substr(0, num_qubits);
     string str2 = outcome.substr(num_qubits, num_qubits);
-
-    int result = parity_bit(bitwise_AND(str1, str2));
+    string bitwise = bitwise_AND(str1, str2);
+    int result = parity_bit(bitwise);
 
     return result;
 };
@@ -157,7 +157,7 @@ double Swap::estimate_purity_from_swap_test(map<string, int> &counts)
     int nb_outcome_1 = 0;
 
     for (auto it = counts.begin(); it != counts.end(); ++it) {
-        const string& outcome = it->first;
+        string outcome = it->first;
         int nb_times_outcome = it->second;
 
         if (swap_test_outcome(outcome) == 0) {
