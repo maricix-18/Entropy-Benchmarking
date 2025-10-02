@@ -36,17 +36,15 @@ protected:
     // TODO issue with subgroup number, make sure you fix it.
     // to keep clear of errors, make sure that num_meas / groups
     // doesn't leave remainder
-    double num_measurements = 320; // M
-    int shots = 1000; // k
+    double num_measurements = 30; // M
+    int shots = 100; // k
     int groups = 5;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
     int M_subgroup = static_cast<int>(ceil(double(num_measurements / groups)));
     double M_factor = 2.0 / (M_subgroup * (M_subgroup - 1));
-    bool verbose = true;
 
     vector<int> key;
-    vector<qreal> prob_dist;
     map<string, int> counts; // map for unique bitstring gathering
     vector<double> means;
   

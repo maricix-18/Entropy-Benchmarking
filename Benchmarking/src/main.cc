@@ -30,7 +30,8 @@ int main(int argc, char* argv[]) {
     cin >> protocol;
 
     cout << " Choose Backend: " << endl;
-    cout << " 1 Simulator" << endl; 
+    cout << " 1 Simulator" << endl;
+    cout << " Input the number of the backend you want to use: ";
     cin >> backend_choice;
 
     if (backend_choice == 1) {
@@ -39,7 +40,9 @@ int main(int argc, char* argv[]) {
         backend_ptr->some_backendfunc();
     
     } else {
-        cout << "Invalid choice." << endl;
+        cout << "Invalid choice - Default Simulator." << endl;
+        backend_ptr = make_unique<Simulator>();
+        backend_ptr->some_backendfunc();
     }
 
     if (protocol == 1) 
@@ -62,24 +65,15 @@ int main(int argc, char* argv[]) {
     }
     else 
     {
-        cout << "Invalid choice." << endl;
+        cout << "Invalid choice - Default Density Matrix." << endl;
+        protocol_ptr = make_unique<DensityMatrix>();
     }
    
     int st = 0;
     int fn = qubits;
     protocol_ptr->setBackend(*backend_ptr);
 
-    // comment this out if you want multiple depths
-    // protocol_ptr->init(qubits, depth);
-    // protocol_ptr->buildCircuit(st, fn);
-    // protocol_ptr->metrics();
-    // protocol_ptr->saveMetrics();
-    // protocol_ptr->destroy();
-
-    // for multiple depths
-    // otherwise only one last depth is stored
-
-    for (int d =0; d<depth; d++)
+    for (int d = 0; d < depth; d++)
     {
         cout << "-Depth " << d << endl;
         protocol_ptr->init(qubits, d);

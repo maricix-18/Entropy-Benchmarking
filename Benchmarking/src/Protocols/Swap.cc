@@ -20,48 +20,28 @@ void Swap::metrics()
 
         for (int i =0; i < groups; i++)
         {
-            // use clone to apply measurements
-            Qureg clone;
-            clone = createCloneQureg(ds_qreg);
-            // Z basis measurments so no measuremtn layer applied
-
-            // get prob distribution
-            long long dim = 1LL << _qubits; // number of basis states
-            for (long long i = 0; i < dim; i++) {
-                qreal prob = calcProbOfBasisState(clone, i);
-                prob_dist.push_back(prob);
-                // print prob distribution
-                // for (int q = qubits - 1; q >= 0; q--)
-                //         std::cout << ((i >> q) & 1);
-                //     std::cout << ": " << prob << std::endl;
-            }
-
-            // no need for clone anymore
-            //cout << "Destroy Clone Q Register\n";
-            destroyQureg(clone);
-
-            // for sampling
-            random_device rd;
-            mt19937 gen(rd());
-            discrete_distribution<> d(prob_dist.begin(), prob_dist.end());
-            
-            // run shots
             for (int k = 0; k < shots; k++)
             {
-                // each shot samples a bitstring
-                int sample = d(gen);
+                Qureg clone;
+                clone = createCloneQureg(ds_qreg);
+                backend->measurementLayer(clone, _qubits, key);
+                // build bitstring for this shot
                 string bitstring;
-                for (int q = _qubits - 1; q >= 0; --q)
-                    bitstring += ((sample >> q) & 1) ? '1' : '0';
+
+                for (int x = 0; x < _qubits; x++)
+                {
+                    int out = applyQubitMeasurement(clone, x);
+                    bitstring += to_string(out);
+                }
+                // counts are ordered by bitstring order
                 counts[bitstring]++;
+                destroyQureg(clone);
             }
 
-            // counts = extract_swap_counts_from_df(df, depth, sample_index, i)
             double pur_estimate = estimate_purity_from_swap_test(counts);
             pur_means.push_back(pur_estimate);
 
             //clear for each group
-            prob_dist.clear();
             counts.clear();
         }
         //for each sample
@@ -74,7 +54,6 @@ void Swap::metrics()
 
     }// samples end
 
-   //Compute metrics
    // Compute metrics
     // mean purity
     double sum = accumulate(pur_samples.begin(), pur_samples.end(), 0.0);
@@ -170,7 +149,7 @@ double Swap::estimate_purity_from_swap_test(map<string, int> &counts)
     }   
 
     int nb_measurements = nb_outcome_0 + nb_outcome_1;
-    double pur_estimate = 2.0 * nb_outcome_0 / nb_measurements - 1.0;
+    double pur_estimate = (2.0 * nb_outcome_0 / nb_measurements) - 1.0;
     return pur_estimate;
 };
 

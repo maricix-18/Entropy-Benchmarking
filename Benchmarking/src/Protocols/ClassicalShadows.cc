@@ -4,19 +4,50 @@ void  ClassicalShadows::somefunc() {
     cout << "classicalShadows protocol function called." << endl;
     backend->some_backendfunc();
 };
-
-double ClassicalShadows::median(vector<double> &vec) {
-    int n = vec.size();
-    sort(vec.begin(), vec.end());
-    if (n % 2 == 1) {
-        // odd number
-        return vec[n / 2];
-    }
-    else {
-        // even number
-        return (vec[n / 2 - 1] + vec[n / 2]) / 2.0;
-    }
-};
+// new sampling method
+// int binarySearchCDF(const std::vector<double>& cdf, double value) {
+//     // Find the index where value would be inserted to keep order
+//     // This corresponds to the sampled outcome
+//     auto it = std::lower_bound(cdf.begin(), cdf.end(), value);
+//     if (it == cdf.end()) return cdf.size() - 1;
+//     return std::distance(cdf.begin(), it);
+// }
+// size_t dim = 1ULL << numQubits;  // 2^numQubits
+// size_t shots = 1024;
+//
+// // Prepare probability vector and CDF
+// std::vector<double> probabilities(dim);
+// std::vector<double> cdf(dim);
+//
+// // Fill probability vector
+// for (size_t i = 0; i < dim; i++) {
+//     probabilities[i] = CalcProb(qureg, i);  // Your function to calculate prob of state i
+// }
+//
+// // Compute cumulative distribution function (CDF)
+// cdf[0] = probabilities[0];
+// for (size_t i = 1; i < dim; i++) {
+//     cdf[i] = cdf[i - 1] + probabilities[i];
+// }
+//
+// // Normalize CDF to 1 (in case of numerical issues)
+// for (size_t i = 0; i < dim; i++) {
+//     cdf[i] /= cdf.back();
+// }
+//
+// // Random number generator setup
+// std::random_device rd;
+// std::mt19937 gen(rd());
+// std::uniform_real_distribution<> dis(0.0, 1.0);
+//
+// // Count measurement outcomes
+// std::map<size_t, size_t> counts;
+//
+// for (size_t shot = 0; shot < shots; shot++) {
+//     double r = dis(gen);
+//     int outcome = binarySearchCDF(cdf, r);
+//     counts[outcome]++;
+// }
 
 void  ClassicalShadows::metrics()
 {
@@ -95,19 +126,6 @@ void  ClassicalShadows::metrics()
     pur_samples.clear();
     R2d_samples.clear();
 
-   // // print shadow map
-   //  for (auto a: shadow_map) {
-   //      cout << "key: ";
-   //      for (auto b : a.first) {
-   //          cout << b;
-   //      }
-   //
-   //      cout << " counts: ";
-   //      for (auto c : a.second) {
-   //          cout << c.first << " " << c.second << " ";
-   //      }
-   //      cout << endl;
-   //  }
 };
 
 void ClassicalShadows::classicalShadows_protocol() {
@@ -136,26 +154,13 @@ void ClassicalShadows::classicalShadows_protocol() {
         Shadow_map shadow_list(start_it, end_it);
         cout << "Shadow list size for group " << i  << ": " << shadow_list.size() << endl;
         double purity = 0.0;
-        // for (auto a: shadow_list) {
-        //     cout << "key: ";
-        //     for (auto b : a.first) {
-        //         cout << b;
-        //     }
-        //
-        //     cout << " counts: ";
-        //     for (auto c : a.second) {
-        //         cout << c.first << " " << c.second << " ";
-        //     }
-        //     cout << endl;
-        // }
+
         // Basically you do a product between each measurement settings outcomes
         // with the other measurement settings outcome in the same group
         // Because we have pauli basis measurements, we have a beta_values lists
         // which already stores the possible values based on what pauli basis was used
 
         for (int m1 = 0; m1 < M_subgroup; m1++) {
-            //if (verbose) cout << "Random unitary index m1 = " << m1 << endl;
-            //cout << "Shadow list size " << shadow_list.size() << endl;
             auto it_m1 = shadow_list.begin();
             advance(it_m1, m1);
 
@@ -165,7 +170,7 @@ void ClassicalShadows::classicalShadows_protocol() {
             for (int m2 = 0; m2 < m1; m2++) {
                 auto it_m2 = shadow_list.begin();
                 advance(it_m2, m2);
-                //if (verbose) cout << "m2 = " << m2 << endl;
+
                 vector<int> m_description_2 = it_m2->first;
                 map<string,int> m_counts_2 = it_m2->second;
 
@@ -200,13 +205,10 @@ void ClassicalShadows::classicalShadows_protocol() {
 
                             prod_over_num_qubits *= beta;
                         }
-                        // if (verbose) cout << "\n Product of interest :" << prod_over_num_qubits << endl;
                         trace_prod_shadows += nb_times_outcome_1 * nb_times_outcome_2 * prod_over_num_qubits;
                     }
                 }
-                // cout<<"Trace prod per subgroup: " << trace_prod_shadows<<endl;
                 purity += K_factor * trace_prod_shadows; // Eq. B7
-                // cout << "Purity: "<<purity<<endl;
             }
         }
 
@@ -231,8 +233,8 @@ void ClassicalShadows::gatherShadows() {
             backend->measurementLayer(clone, _qubits, key);
             // build bitstring for this shot
             string bitstring;
-            // try big end as qiskit
-            for (int x = _qubits-1; x >= 0; x--)
+
+            for (int x = 0; x < _qubits; x++)
             {
                 int out = applyQubitMeasurement(clone, x);
                 bitstring += to_string(out);
@@ -242,16 +244,6 @@ void ClassicalShadows::gatherShadows() {
             destroyQureg(clone);
         }
 
-        // store shadows
-        //print counts
-        // cout<<"Counts: ";
-        // for (auto x :counts) {
-        //     cout<< x.first <<": "<< x.second <<endl;
-        // }
-
-        // reverse key for qiskit
-        reverse(key.begin(), key.end());
-        // shadow_map.insert({key,counts});
         shadow_map.push_back(make_pair(key, counts));
         counts.clear();
         key.clear();
@@ -289,6 +281,20 @@ vector<int> ClassicalShadows::generate_measurement_setting()
     }
     cout << endl;
     return measurement_setting;
+};
+
+
+double ClassicalShadows::median(vector<double> &vec) {
+    int n = vec.size();
+    sort(vec.begin(), vec.end());
+    if (n % 2 == 1) {
+        // odd number
+        return vec[n / 2];
+    }
+    else {
+        // even number
+        return (vec[n / 2 - 1] + vec[n / 2]) / 2.0;
+    }
 };
 
 void ClassicalShadows::saveMetrics()

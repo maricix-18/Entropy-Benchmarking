@@ -25,8 +25,8 @@ protected:
     vector<double> all_R2d_std;
     vector<double> pur_samples;
     vector<double> R2d_samples;
-    double num_measurements = 320; // M
-    int shots = 1000; // k
+    double num_measurements = 30; // M
+    int shots = 100; // k
     int groups = 5;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
