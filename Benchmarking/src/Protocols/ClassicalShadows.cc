@@ -5,6 +5,19 @@ void  ClassicalShadows::somefunc() {
     backend->some_backendfunc();
 };
 
+double ClassicalShadows::median(vector<double> &vec) {
+    int n = vec.size();
+    sort(vec.begin(), vec.end());
+    if (n % 2 == 1) {
+        // odd number
+        return vec[n / 2];
+    }
+    else {
+        // even number
+        return (vec[n / 2 - 1] + vec[n / 2]) / 2.0;
+    }
+};
+
 void  ClassicalShadows::metrics()
 {
     cout << fixed;
@@ -12,7 +25,7 @@ void  ClassicalShadows::metrics()
 
     beta_vals_paulibasis(); // if pauli basis measurements are used 
 
-    // for n samples do the protocol
+    //for n samples do the protocol
     for (int n = 0; n < samples; n++)
     {
         cout << "Gather Shadows for sample: " << n <<endl;;
@@ -29,24 +42,23 @@ void  ClassicalShadows::metrics()
         cout << "Final means values: "<<endl;
         for (auto m:means)
         {
-            cout << m <<endl;
+            cout << m << endl;
         }
 
-        //median of means - get the middle val
-        int mid = int(means.size() / 2);
-        nth_element(means.begin(), means.begin() + mid, means.end());
-        double mom = means[mid]; // purity val
+
+        double mom = median(means);// purity val
+
         double R2d = (-1 * log2(mom)) / _qubits; // R2d val
 
         cout << "Classical Shadows Protocol completed.\n";
 
-        cout << "Median of means: " << mom << " R2d " << R2d << endl;
+        cout << "Median of means (mom): " << mom << " R2d " << R2d << endl;
 
         // gether list of samples
         pur_samples.push_back(mom);
         R2d_samples.push_back(R2d);
 
-        // clear 
+        // clear
         shadow_map.clear();
         means.clear();
 
@@ -59,11 +71,11 @@ void  ClassicalShadows::metrics()
     all_purity_mean.push_back(pur_mean);
 
     // Std for purity
-    double accum = 0.0;
+    double variance = 0.0;
     for (double x : pur_samples) {
-        accum += (x - pur_mean) * (x - pur_mean);
+        variance += pow(abs(x - pur_mean), 2);
     }
-    double pur_std = sqrt(accum / pur_samples.size());
+    double pur_std = sqrt(variance / pur_samples.size());
     all_purity_std.push_back(pur_std);
 
     // mean r2d
@@ -72,23 +84,40 @@ void  ClassicalShadows::metrics()
     all_R2d_mean.push_back(R2d_mean);
 
     //std for r2d
-    accum = 0.0;
+    variance = 0.0;
     for (double x : R2d_samples) {
-        accum += (x - R2d_mean) * (x - R2d_mean);
+        variance += pow(abs(x - R2d_mean),2);
     }
-    double R2d_std = sqrt(accum / R2d_samples.size());
+    double R2d_std = sqrt(variance / R2d_samples.size());
     all_R2d_std.push_back(R2d_std);
 
+    // clean up
+    pur_samples.clear();
+    R2d_samples.clear();
+
+   // // print shadow map
+   //  for (auto a: shadow_map) {
+   //      cout << "key: ";
+   //      for (auto b : a.first) {
+   //          cout << b;
+   //      }
+   //
+   //      cout << " counts: ";
+   //      for (auto c : a.second) {
+   //          cout << c.first << " " << c.second << " ";
+   //      }
+   //      cout << endl;
+   //  }
 };
 
-void ClassicalShadows::classicalShadows_protocol() { 
+void ClassicalShadows::classicalShadows_protocol() {
     // details are in this paper https://arxiv.org/pdf/2412.18007
     // noting the data referencing them
-    // Eq. B19 
+    // Eq. B19
     for (int i = 0; i < groups; i++)
     {
         // Get list of shadows of current group
-        // cout << "Inside group: "<< i << endl;
+        cout << "Inside group: "<< i << endl;
         int start_idx = i * M_subgroup;
         int end_idx = (i + 1) * M_subgroup;
 
@@ -104,36 +133,41 @@ void ClassicalShadows::classicalShadows_protocol() {
         advance(end_it, end_idx);
 
         // store the respective group in a list
-        Shadow_list shadow_list(start_it, end_it);
-
-        // printing purposes 
-        // if (verbose) {
-        //    // cout << "\n Sublist of shadows considered is : \n";
-        // for (const auto& kv : shadow_list) {
-        //         cout << "[ ";
-        //         for (auto q : kv.first) cout << q << " ";
-        //         cout << "], { ";
-        //         for (auto& inner_kv : kv.second) cout << inner_kv.first << ":" << inner_kv.second << " ";
-        //         cout << "}\n";
-        //     }
-        // }
-
+        Shadow_map shadow_list(start_it, end_it);
+        cout << "Shadow list size for group " << i  << ": " << shadow_list.size() << endl;
         double purity = 0.0;
+        // for (auto a: shadow_list) {
+        //     cout << "key: ";
+        //     for (auto b : a.first) {
+        //         cout << b;
+        //     }
+        //
+        //     cout << " counts: ";
+        //     for (auto c : a.second) {
+        //         cout << c.first << " " << c.second << " ";
+        //     }
+        //     cout << endl;
+        // }
         // Basically you do a product between each measurement settings outcomes
         // with the other measurement settings outcome in the same group
-        // Because we have pauli basis measurements, we have a beta_values lists 
-        // which already stores the possible values based on what pauli basis was used 
+        // Because we have pauli basis measurements, we have a beta_values lists
+        // which already stores the possible values based on what pauli basis was used
+
         for (int m1 = 0; m1 < M_subgroup; m1++) {
             //if (verbose) cout << "Random unitary index m1 = " << m1 << endl;
             //cout << "Shadow list size " << shadow_list.size() << endl;
+            auto it_m1 = shadow_list.begin();
+            advance(it_m1, m1);
 
-            const vector<int>& m_description_1 = shadow_list[m1].first;
-            const map<string,int>& m_counts_1 = shadow_list[m1].second;
+            vector<int> m_description_1 = it_m1->first;
+            map<string,int> m_counts_1 = it_m1->second;
 
             for (int m2 = 0; m2 < m1; m2++) {
+                auto it_m2 = shadow_list.begin();
+                advance(it_m2, m2);
                 //if (verbose) cout << "m2 = " << m2 << endl;
-                const vector<int>& m_description_2 = shadow_list[m2].first;
-                const map<string,int>& m_counts_2 = shadow_list[m2].second;
+                vector<int> m_description_2 = it_m2->first;
+                map<string,int> m_counts_2 = it_m2->second;
 
                 double trace_prod_shadows = 0.0;
 
@@ -143,14 +177,12 @@ void ClassicalShadows::classicalShadows_protocol() {
                     string key = to_string(m_description_1[n]) + to_string(m_description_2[n]);
                     beta_items[n] = beta_values[key]; // (Table I)
                 }
-
-                
-                for (const auto& m_counts_item_1 : m_counts_1) {
-                    const string& outcome_1 = m_counts_item_1.first;
+                for (auto m_counts_item_1 : m_counts_1) {
+                    string outcome_1 = m_counts_item_1.first;
                     int nb_times_outcome_1 = m_counts_item_1.second;
 
-                    for (const auto& m_counts_item_2 : m_counts_2) {
-                        const string& outcome_2 = m_counts_item_2.first;
+                    for (auto m_counts_item_2 : m_counts_2) {
+                        string outcome_2 = m_counts_item_2.first;
                         int nb_times_outcome_2 = m_counts_item_2.second;
 
                         double prod_over_num_qubits = 1.0;
@@ -168,9 +200,7 @@ void ClassicalShadows::classicalShadows_protocol() {
 
                             prod_over_num_qubits *= beta;
                         }
-
                         // if (verbose) cout << "\n Product of interest :" << prod_over_num_qubits << endl;
-
                         trace_prod_shadows += nb_times_outcome_1 * nb_times_outcome_2 * prod_over_num_qubits;
                     }
                 }
@@ -179,66 +209,53 @@ void ClassicalShadows::classicalShadows_protocol() {
                 // cout << "Purity: "<<purity<<endl;
             }
         }
+
         purity *= M_factor; // Eq. B19
         means.push_back(purity);
     }
 };
 
-
-void ClassicalShadows::gatherShadows() { 
+void ClassicalShadows::gatherShadows() {
 
     for (int j = 0; j < num_measurements; j++)
-        {
-            //cout << "Measurment setting no: " << j <<endl;
+    {
+        cout << "Measurement setting no: " << j <<endl;
 
-            // generate and get measurement setting
-            key = generate_measurement_setting();
-            
-            // use clone to apply measurements
+        // generate and get measurement setting
+        key = generate_measurement_setting();
+
+        for (int k = 0; k < shots; k++)
+        {
             Qureg clone;
             clone = createCloneQureg(ds_qreg);
             backend->measurementLayer(clone, _qubits, key);
-
-            // get prob distribution of current measurement setting
-            long long dim = 1LL << _qubits; // number of basis states
-            for (long long i = 0; i < dim; i++) {
-                qreal prob = calcProbOfBasisState(clone, i);
-                prob_dist.push_back(prob);
-                // print prob distribution
-                // for (int q = qubits - 1; q >= 0; q--)
-                //         std::cout << ((i >> q) & 1);
-                //     std::cout << ": " << prob << std::endl;
-            }
-            // no need for clone anymore
-            // cout << "Destroy Clone Q Register\n";
-            destroyQureg(clone);
-
-            // for sampling
-            random_device rd;
-            mt19937 gen(rd());
-            discrete_distribution<> d(prob_dist.begin(), prob_dist.end());
-            
-            // run shots
-            for (int k = 0; k < shots; k++)
+            // build bitstring for this shot
+            string bitstring;
+            // try big end as qiskit
+            for (int x = _qubits-1; x >= 0; x--)
             {
-                // each shot samples a bitstring
-                int sample = d(gen);
-                string bitstring;
-                for (int q = 0; q < _qubits; q++)
-                    bitstring += ((sample >> q) & 1) ? '1' : '0';
-                counts[bitstring]++;
-                
+                int out = applyQubitMeasurement(clone, x);
+                bitstring += to_string(out);
             }
-            // results
-            // for (const auto& kv : counts) {
-            //     cout << kv.first << ": " << kv.second << std::endl;
-            // }
-
-            // store shadows
-            shadow_map.insert({key,counts});
-            prob_dist.clear();
-            counts.clear();
+            // counts are ordered by bitstring order
+            counts[bitstring]++;
+            destroyQureg(clone);
         }
+
+        // store shadows
+        //print counts
+        // cout<<"Counts: ";
+        // for (auto x :counts) {
+        //     cout<< x.first <<": "<< x.second <<endl;
+        // }
+
+        // reverse key for qiskit
+        reverse(key.begin(), key.end());
+        // shadow_map.insert({key,counts});
+        shadow_map.push_back(make_pair(key, counts));
+        counts.clear();
+        key.clear();
+    }
 };
 
 void ClassicalShadows::beta_vals_paulibasis()
@@ -248,21 +265,29 @@ void ClassicalShadows::beta_vals_paulibasis()
             {   
                 string key = to_string(i) + to_string(j);
                 if (i != j)
-                    beta_values[key] = {1.0/2.0, 1.0/2.0}; //two identical outcomes
+                    beta_values[key] = {1.0/2.0, 1.0/2.0}; //first - identical outcomes. second - different
                 else
-                    beta_values[key] = {5.0, -4.0}; // different outcomes
+                    beta_values[key] = {5.0, -4.0};
             }
 };
 
 vector<int> ClassicalShadows::generate_measurement_setting()
 {
     vector<int> measurement_setting;
-    // measurement setting
+
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> dis(0, 2);
+
     for (int i = 0; i < _qubits; i++) {
-        int basis = genrand_int32() % 3; // 0, 1, or 2 (X ,Y, Z basis)
-        //cout << "Measurement setting for qubit " << i << ": " << basis << "\n";
+        int basis = dis(gen);
         measurement_setting.push_back(basis);
     }
+    cout << "Meas setting: ";
+    for (int i = 0; i < _qubits; i++) {
+        cout << measurement_setting[i] << ", ";
+    }
+    cout << endl;
     return measurement_setting;
 };
 
@@ -270,7 +295,7 @@ void ClassicalShadows::saveMetrics()
 {
     cout << "Saving Classical shadows metrics to file." << endl;
     json j;
-    string filename = "../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) + ".json";
+    string filename = "../../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) + ".json";
     // check file or create
     struct stat buffer;
     if (stat(filename.c_str(), &buffer) == 0) {
@@ -301,4 +326,5 @@ void ClassicalShadows::saveMetrics()
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
+
 };

@@ -48,7 +48,8 @@ IF EXIST build (
     rmdir /s /q build
 )
 
-set PATH=C:\Users\maria\Desktop\Entropy_Benchmark_quest\Entropy-Benchmarking\QuEST\build;%PATH%
+REM set PATH=C:\Users\maria\Desktop\Entropy_Benchmark_quest\Entropy-Benchmarking\QuEST\build;%PATH%
+$Env:PATH = "C:\Users\maria\Desktop\Entropy_Benchmark_quest\Entropy-Benchmarking\QuEST\build;" + $Env:PATH
 
 echo Building Benchmarking Project...
 mkdir build

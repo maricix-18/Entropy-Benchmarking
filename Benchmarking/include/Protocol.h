@@ -47,8 +47,6 @@ class Protocol
    void angles_generator();
    void destroy();
 
-   //virtual ~Protocol();
-
 };
 
 #endif

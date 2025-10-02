@@ -34,7 +34,7 @@ void DensityMatrix::saveMetrics()
 {
     cout << "Saving DensityMatrix metrics to file." << endl;
     json j;
-    string filename = "../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";
+    string filename = "../../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";
     // check file or create
     struct stat buffer;
     if (stat(filename.c_str(), &buffer) == 0) {

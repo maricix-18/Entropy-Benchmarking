@@ -10,5 +10,6 @@ cmake ..
 
 msbuild entropy_benchmarking.sln /t:Rebuild
 Debug\entropy_benchmarking.exe
+
 cd ..
 cd ..

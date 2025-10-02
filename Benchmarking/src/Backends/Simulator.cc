@@ -43,7 +43,7 @@ void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<
 
 void Simulator::measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis)
 {
-    cout << "Simulator::measurementLayer called with " << qubits << " qubits." << endl;
+    //cout << "Simulator::measurementLayer called with " << qubits << " qubits." << endl;
     for (int j = 0; j < qubits; j++)
     {
         //cout<< "Applying meas " << measurement_setting[j]<< " on qubit " << j <<endl;

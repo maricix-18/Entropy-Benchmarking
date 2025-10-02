@@ -26,14 +26,12 @@ protected:
     vector<double> pur_samples;
     vector<double> R2d_samples;
     double num_measurements = 320; // M
-    int shots = 100; // k
+    int shots = 1000; // k
     int groups = 5;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
     int M_subgroup =static_cast<int>(ceil(double(num_measurements / groups)));
     double M_factor = 2.0 / (M_subgroup * (M_subgroup - 1));
-    bool circuit_bool = true;
-    bool verbose = true;
 
     vector<int> key;
     vector<qreal> prob_dist;

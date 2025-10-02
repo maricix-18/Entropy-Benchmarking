@@ -16,7 +16,6 @@ set(QuEST "${CMAKE_SOURCE_DIR}/../QuEST")
 # quest header file directory, build dir
 set(QuEST_build "${QuEST}/build/include")
 set(QuEST_lib "${QuEST}/build")
-set(QuEST_q "${QuEST}")
 
 # executable
 add_executable(entropy_benchmarking 
@@ -37,13 +36,12 @@ target_include_directories(entropy_benchmarking PUBLIC
 "${CMAKE_SOURCE_DIR}/include/Protocols" # protocol header files
 "${QuEST_lib}"
 "${QuEST}" 
-"${QuEST_build}" 
-"${QuEST_q}"
+"${QuEST_build}"
 "../json/include"
 "../eigen"
 )
 
 #link QuEST library
-#target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib"  Eigen3::Eigen)
+target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib")
 
-target_link_libraries(entropy_benchmarking "${QuEST_lib}/libQuEST.so")
+#target_link_libraries(entropy_benchmarking "${QuEST_lib}/libQuEST.so")

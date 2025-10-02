@@ -91,9 +91,3 @@ void Protocol::destroy()
     cout << "Destroy Q Register\n";
     destroyQureg(this->ds_qreg);
 };
-
-// Protocol::~Protocol()
-// {
-//     cout << "Destroy Q Register\n";
-//     destroyQureg(this->ds_qreg);
-// };

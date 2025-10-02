@@ -12,7 +12,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int qubits = 3;
-    int depth = 15;
+    int depth = 10;
 
     int backend_choice;
     int protocol;
