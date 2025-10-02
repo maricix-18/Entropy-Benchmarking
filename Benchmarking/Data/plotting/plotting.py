@@ -7,7 +7,7 @@ matplotlib.use('TkAgg')
 # Load JSON data from two file
 
 print("Read data")
-with open('C:/Users/maria/Desktop/Entropy_Benchmark_quest/Entropy-Benchmarking/Benchmarking/Data_test/ClassicalShadows_metrics/Q3_correct_qiskit_order.json') as f:
+with open('/Benchmarking/Data_test/ClassicalShadows_metrics/results_debugging/Q3_m320_k1000_quest_order_sampling2.json') as f:
     data2 = json.load(f)
 
 with open('C:/Users/maria/Desktop/Entropy_Benchmark_quest/Entropy-Benchmarking/Benchmarking/Data_test/DensityMatrices_metrics/Q3.json') as f:
