@@ -25,19 +25,13 @@ protected:
     vector<double> all_R2d_std;
     vector<double> pur_samples;
     vector<double> R2d_samples;
-    double num_measurements = 30; // M
-    int shots = 100; // k
+    int num_measurements = 3200; // number of measurements
     int groups = 5;
+    int shots =  static_cast<int>(ceil(double(num_measurements / groups))); //K
     int samples = 3; // samples
-    double K_factor = 1.0 / (shots * shots);
-    int M_subgroup =static_cast<int>(ceil(double(num_measurements / groups)));
-    double M_factor = 2.0 / (M_subgroup * (M_subgroup - 1));
-
-    vector<int> key;
-    vector<qreal> prob_dist;
     map<string, int> counts;
     vector<double> means;
-    
+
  public:
     void somefunc() override;
    
@@ -45,7 +39,7 @@ protected:
 
     void saveMetrics() override;
 
-    void swap_layer();
+    void swap_circuit();
 
     double estimate_purity_from_swap_test(map<string, int> &counts);
 

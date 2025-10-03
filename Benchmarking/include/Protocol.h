@@ -24,7 +24,6 @@ class Protocol
     int _qubits;
     int _depth;
     vector<double> angles_array;
-    //int angl_pos = 0;
 
  public:
 

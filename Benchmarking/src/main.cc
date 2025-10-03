@@ -11,7 +11,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 3;
+    int qubits = 2;
     int depth = 10;
 
     int backend_choice;
@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
 
     for (int d = 0; d < depth; d++)
     {
-        cout << "-Depth " << d << endl;
+        cout << "- Depth " << d << endl;
         protocol_ptr->init(qubits, d);
         protocol_ptr->buildCircuit(st, fn);
         protocol_ptr->metrics();

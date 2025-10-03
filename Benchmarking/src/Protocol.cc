@@ -19,8 +19,8 @@ void Protocol::somefunc()
 void Protocol::init(int &qubits, int &depth)
 {
     // init values
-    this->_qubits = qubits;
-    this->_depth = depth;
+    _qubits = qubits;
+    _depth = depth;
 
     cout << "Create Q Environment\n";
     if (isQuESTEnvInit() == 0)
@@ -48,6 +48,10 @@ void Protocol::buildCircuit(int &st_qubit, int &fn_qubit)
     for (int d = 0; d < this->_depth; d++)
     {
         backend->applyLayer(this->ds_qreg, st_qubit, fn_qubit, angles_array);
+        cout << "for layer: " << d << "angles: ";
+
+        // for (int i =0 ; i < angles_array.size(); i++)
+        //     cout << angles_array[i] << ", ";
     }
     
 };
@@ -74,14 +78,12 @@ void Protocol::angles_generator()
 
     int angles_per_layer = 2*this->_qubits;
     int total_angles = angles_per_layer*this->_depth;
-
     cout << "Generating angles.\n";
 
     // get angle values
-    for (int i = 0; i < total_angles; i++) 
+    for (int i = 0; i < total_angles; i++)
     {
         double r = 2 * PI * genrand_res53();
-        //printf("Random[%d] = %.17f\n", i, r);
         this->angles_array.push_back(r);
     }
 };

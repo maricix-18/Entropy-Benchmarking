@@ -8,27 +8,27 @@ void Swap::somefunc() {
 void Swap::metrics()
 {
     cout << "Swap metrics function called for last depth." << endl;
-    // we generated two density matrices for the swap register
+    // add swap circuit
+    swap_circuit();
 
-    //inside metrics()
-    swap_layer();
-
-        // for n samples do the protocol
+    // for n samples do the protocol
     for (int n = 0; n < samples; n++)
     {
         vector<double> pur_means;
 
-        for (int i =0; i < groups; i++)
+        for (int i = 0; i < groups; i++)
         {
+            cout << "group: " << i << endl;
+            // counts of measurements for current group
             for (int k = 0; k < shots; k++)
             {
+                cout << "shot: " << k << endl;
                 Qureg clone;
                 clone = createCloneQureg(ds_qreg);
-                backend->measurementLayer(clone, _qubits, key);
+
                 // build bitstring for this shot
                 string bitstring;
-
-                for (int x = 0; x < _qubits; x++)
+                for (int x = 0; x < ds_qreg.numQubits; x++)
                 {
                     int out = applyQubitMeasurement(clone, x);
                     bitstring += to_string(out);
@@ -97,6 +97,7 @@ double Swap::median(vector<double> &means) {
 };
 
 string Swap::bitwise_AND(string& str1, string& str2) {
+    // returns the bitwise AND of two strings
     string result;
     for (size_t i = 0; i < str1.length(); ++i) {
         if (str1[i] == '1' && str2[i] == '1') {
@@ -109,6 +110,7 @@ string Swap::bitwise_AND(string& str1, string& str2) {
 }
 
 int Swap::parity_bit(string& bitstring) {
+    // parity bit of a string
     int count = 0;
     for (char c : bitstring) {
         if (c == '1') {
@@ -120,10 +122,10 @@ int Swap::parity_bit(string& bitstring) {
 
 int Swap::swap_test_outcome(string &outcome)
 {
-    size_t num_qubits = outcome.length() / 2;
+    int num_qubits = outcome.length() / 2;
 
     string str1 = outcome.substr(0, num_qubits);
-    string str2 = outcome.substr(num_qubits, num_qubits);
+    string str2 = outcome.substr(num_qubits, 2*num_qubits);
     string bitwise = bitwise_AND(str1, str2);
     int result = parity_bit(bitwise);
 
@@ -153,20 +155,17 @@ double Swap::estimate_purity_from_swap_test(map<string, int> &counts)
     return pur_estimate;
 };
 
-void Swap::swap_layer()
+void Swap::swap_circuit()
 {
-    // from buildCircuit we populate the first half of the register
-    // populate second half
+    // add swap circuit
+    // populate the second half of the circuit
     int q2_start = _qubits;
     int q2_fin = (q2_start + _qubits);
-    cout << "Swap_layer from " << q2_start << "to " << q2_fin << endl;
-    for (int d = 0; d < _depth; d++)
-    {
-       backend->applyLayer(ds_qreg, q2_start, q2_fin, angles_array);
+    for (int i = 0; i < _depth; i++) {
+        backend->applyLayer(ds_qreg, q2_start, q2_fin, angles_array);
     }
 
-    // add swap layer
-    cout << "Last final swap layer " << endl;
+    cout << "Swap circuit " << endl;
     for (int i = 0; i < _qubits; i++) {
         applyControlledPauliX(ds_qreg, i, i + _qubits);
         applyHadamard(ds_qreg, i);
