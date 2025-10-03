@@ -4,50 +4,6 @@ void  ClassicalShadows::somefunc() {
     cout << "classicalShadows protocol function called." << endl;
     backend->some_backendfunc();
 };
-// new sampling method
-// int binarySearchCDF(const std::vector<double>& cdf, double value) {
-//     // Find the index where value would be inserted to keep order
-//     // This corresponds to the sampled outcome
-//     auto it = std::lower_bound(cdf.begin(), cdf.end(), value);
-//     if (it == cdf.end()) return cdf.size() - 1;
-//     return std::distance(cdf.begin(), it);
-// }
-// size_t dim = 1ULL << numQubits;  // 2^numQubits
-// size_t shots = 1024;
-//
-// // Prepare probability vector and CDF
-// std::vector<double> probabilities(dim);
-// std::vector<double> cdf(dim);
-//
-// // Fill probability vector
-// for (size_t i = 0; i < dim; i++) {
-//     probabilities[i] = CalcProb(qureg, i);  // Your function to calculate prob of state i
-// }
-//
-// // Compute cumulative distribution function (CDF)
-// cdf[0] = probabilities[0];
-// for (size_t i = 1; i < dim; i++) {
-//     cdf[i] = cdf[i - 1] + probabilities[i];
-// }
-//
-// // Normalize CDF to 1 (in case of numerical issues)
-// for (size_t i = 0; i < dim; i++) {
-//     cdf[i] /= cdf.back();
-// }
-//
-// // Random number generator setup
-// std::random_device rd;
-// std::mt19937 gen(rd());
-// std::uniform_real_distribution<> dis(0.0, 1.0);
-//
-// // Count measurement outcomes
-// std::map<size_t, size_t> counts;
-//
-// for (size_t shot = 0; shot < shots; shot++) {
-//     double r = dis(gen);
-//     int outcome = binarySearchCDF(cdf, r);
-//     counts[outcome]++;
-// }
 
 void  ClassicalShadows::metrics()
 {
@@ -216,8 +172,21 @@ void ClassicalShadows::classicalShadows_protocol() {
         means.push_back(purity);
     }
 };
+// new sampling method
+int ClassicalShadows::binarySearchCDF(const std::vector<double>& cdf, double value) {
+    // Find the index where value would be inserted to keep order
+    // This corresponds to the sampled outcome
+    auto it = std::lower_bound(cdf.begin(), cdf.end(), value);
+    if (it == cdf.end()) return cdf.size() - 1;
+    return std::distance(cdf.begin(), it);
+};
 
 void ClassicalShadows::gatherShadows() {
+
+    // Random number generator setup
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
 
     for (int j = 0; j < num_measurements; j++)
     {
@@ -226,24 +195,40 @@ void ClassicalShadows::gatherShadows() {
         // generate and get measurement setting
         key = generate_measurement_setting();
 
-        for (int k = 0; k < shots; k++)
-        {
-            Qureg clone;
-            clone = createCloneQureg(ds_qreg);
-            backend->measurementLayer(clone, _qubits, key);
-            // build bitstring for this shot
-            string bitstring;
+        // Sampling 2
+        Qureg clone;
+        clone = createCloneQureg(ds_qreg);
+        backend->measurementLayer(clone, _qubits, key);
+        size_t dim = 1ULL << _qubits;  // 2^numQubits
 
-            for (int x = 0; x < _qubits; x++)
-            {
-                int out = applyQubitMeasurement(clone, x);
-                bitstring += to_string(out);
-            }
-            // counts are ordered by bitstring order
-            counts[bitstring]++;
-            destroyQureg(clone);
+        // Prepare probability vector and CDF
+        vector<double> probabilities(dim);
+        vector<double> cdf(dim);
+
+        // Fill probability vector
+        for (size_t i = 0; i < dim; i++) {
+            probabilities[i] = calcProbOfBasisState(clone, i);
         }
 
+        // Compute cumulative distribution function (CDF)
+        cdf[0] = probabilities[0];
+        for (size_t i = 1; i < dim; i++) {
+            cdf[i] = cdf[i - 1] + probabilities[i];
+        }
+
+        // Count measurement outcomes
+        for (size_t shot = 0; shot < shots; shot++) {
+            double r = dis(gen);
+            int outcome = binarySearchCDF(cdf, r);
+            // Convert outcome to bitstring with leading zeros
+            string bitstring;
+            for (int i = 0; i < _qubits; i++) {
+                bitstring += ((outcome >> i) & 1) ? '1' : '0';
+            }
+            counts[bitstring]++;
+        }
+
+        destroyQureg(clone);
         shadow_map.push_back(make_pair(key, counts));
         counts.clear();
         key.clear();

@@ -25,7 +25,7 @@ protected:
     vector<double> all_R2d_std;
     vector<double> pur_samples;
     vector<double> R2d_samples;
-    int num_measurements = 3200; // number of measurements
+    int num_measurements = 320000; // number of measurements
     int groups = 5;
     int shots =  static_cast<int>(ceil(double(num_measurements / groups))); //K
     int samples = 3; // samples
@@ -39,17 +39,19 @@ protected:
 
     void saveMetrics() override;
 
-    void swap_circuit();
+    void swapLayer();
 
-    double estimate_purity_from_swap_test(map<string, int> &counts);
+    double estimatePurityFromSwapTest(map<string, int> &counts);
 
-    int swap_test_outcome(string &outcome);
+    int swapTestOutcome(string &outcome);
 
-    int parity_bit(string& bitstring);
+    int parityBit(string& bitstring);
 
-    string bitwise_AND(string& str1, string& str2);
+    string bitwiseAND(string& str1, string& str2);
 
     double median(vector<double> &means);
+
+    int binarySearchCDF(const std::vector<double>& cdf, double value);
 
 };
 

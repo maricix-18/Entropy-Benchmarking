@@ -4,16 +4,18 @@ void Simulator::some_backendfunc() {
     cout << "Simulator backend function called." << endl;
 };
 
-void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array)
+void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array, int &depth)
 {
     cout << "Simulator::applyLayer called from q " << st_qubit << " to q " << fn_qubit - 1<< endl;
-    int angl_pos = 0;
+    // keep trakc of current angle pos of current depth
+    int angl_pos = 2 * (fn_qubit - st_qubit) * (depth - 1); // starting pos for the angle array / depth
+
     //cout<< "Appyling sim layer. \n";
     // rx + noise, ry + noise, cz + noise
     for (int q = st_qubit; q < fn_qubit; q++)
     {
         //cout << "Angle pos: " << angl_pos <<"\n";
-        //cout<<"rx gate: Angle = "<<angles_array[angl_pos]<<", Applied to q[" << j <<"\n";
+        cout<<"rx gate: Angle = "<<angles_array[angl_pos]<<", Applied to q[" << q <<"]\n";
         applyRotateX(ds_qreg, q, angles_array[angl_pos]);
         mixDepolarising(ds_qreg, q, p1);
         angl_pos++;
@@ -23,7 +25,7 @@ void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<
     for (int q = st_qubit; q < fn_qubit; q++)
     {
         //cout << "Angle pos: " << angl_pos <<"\n";
-        //cout<<"ry gate: Angle = "<<angles_array[angl_pos]<<", Applied to q[" << j <<"\n";
+        cout<<"ry gate: Angle = "<<angles_array[angl_pos]<<", Applied to q[" << q <<"]\n";
         applyRotateY(ds_qreg, q, angles_array[angl_pos]);
         mixDepolarising(ds_qreg, q, p1);
         angl_pos++;
@@ -32,9 +34,9 @@ void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<
     // for each layer add 2x cz layer on nearest neighbour qubits
     for (int q2 = 0; q2 < 2; q2++)
     {
-        for (int q = q2; q < fn_qubit-1; q+=2)
+        for (int q = q2 + st_qubit; q < fn_qubit - 1; q+=2)
         {
-           // cout<<"cz gate applied to control " << j <<" target: "<<j+1 <<"\n";
+            cout<<"cz gate applied to control " << q <<" target: "<<q+1 <<"\n";
             applyControlledPauliZ(ds_qreg, q, q+1);
             mixTwoQubitDepolarising(ds_qreg, q, q+1,p2);
         }

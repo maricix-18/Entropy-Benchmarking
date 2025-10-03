@@ -18,24 +18,27 @@ using namespace std;
 class Protocol
 {
  protected:
-    string this_prot;
+    string this_prot; // for swap register
     Backend* backend; // pointer to base class Backend
     Qureg ds_qreg;
     int _qubits;
-    int _depth;
+    int _depth; // current depth
+    int _max_depth; // total number of depths for experiments
     vector<double> angles_array;
 
  public:
 
    virtual void somefunc();
 
-   void init(int &qubits, int &depth);
+   void initialise(Backend &_backend, int &qubits, int &max_depth);
 
    void setBackend(Backend &_backend);
 
    void setProtocol(string &ptr);
 
-   void buildCircuit(int &st_qubit, int &fn_qubit);
+   void setQureg();
+
+   void buildCircuit(int &curr_depth);
 
    virtual void measurement();
    
@@ -44,6 +47,7 @@ class Protocol
    virtual void saveMetrics();
 
    void angles_generator();
+
    void destroy();
 
 };

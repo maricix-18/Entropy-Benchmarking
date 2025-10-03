@@ -1,5 +1,18 @@
 #include "Protocol.h"
 
+void Protocol::initialise(Backend &_backend, int &qubits, int &max_depth)
+{
+    // set backend
+    setBackend(_backend);
+
+    // init values
+    _qubits = qubits;
+    _max_depth = max_depth;
+
+    // init angles
+    angles_generator();
+};
+
 void Protocol::setBackend(Backend &_backend) {
     cout << "Setting backend in protoc0l.cc." << endl;
     backend = &_backend;// Point the base class Backend pointer to the eg simulatr obj
@@ -7,25 +20,16 @@ void Protocol::setBackend(Backend &_backend) {
 
 void Protocol::setProtocol(string &ptr)
 {
+    // for swap register
     this_prot = ptr;
 };
 
-void Protocol::somefunc()
+void Protocol::setQureg()
 {
-    cout << "Protocol function called." << endl;
-    backend->some_backendfunc();
-};
-
-void Protocol::init(int &qubits, int &depth)
-{
-    // init values
-    _qubits = qubits;
-    _depth = depth;
-
     cout << "Create Q Environment\n";
     if (isQuESTEnvInit() == 0)
         initQuESTEnv();
-    
+
     if (this_prot == "Swap")
     {
         cout << "Create Swap Register\n";
@@ -33,27 +37,42 @@ void Protocol::init(int &qubits, int &depth)
     }
     else{
         cout << "Create Q Register\n";
-        this->ds_qreg = createDensityQureg(_qubits);
+        ds_qreg = createDensityQureg(_qubits);
     }
-   
+}
 
-    //generate the angles for the circuit
-    angles_generator();
-
-};
-
-void Protocol::buildCircuit(int &st_qubit, int &fn_qubit)
+void Protocol::buildCircuit(int &curr_depth)
 {
-   
-    for (int d = 0; d < this->_depth; d++)
-    {
-        backend->applyLayer(this->ds_qreg, st_qubit, fn_qubit, angles_array);
-        cout << "for layer: " << d << "angles: ";
+    // build circuit for current depth
+    _depth = curr_depth;
 
-        // for (int i =0 ; i < angles_array.size(); i++)
-        //     cout << angles_array[i] << ", ";
+    if (_depth > 0)
+    {   // only build layer if depth > 0
+        int st_qubit = 0;
+        if (this_prot == "Swap")
+        {
+            // populate q register for the swap test
+            st_qubit = 0;
+            int fn_qubit = _qubits;
+
+            int st_swap = _qubits;
+            int fn_swap = 2*_qubits;
+            for (int d = 1; d <= _depth; d++)
+            {
+                backend->applyLayer(ds_qreg, st_qubit, fn_qubit, angles_array, d);
+                backend->applyLayer(ds_qreg, st_swap, fn_swap, angles_array, d);
+            }
+        }
+        else
+        {
+            int fn_qubit = _qubits;
+
+            for (int d = 1; d <= _depth; d++)
+            {
+                backend->applyLayer(ds_qreg, st_qubit, fn_qubit, angles_array, d);
+            }
+        }
     }
-    
 };
 
 void Protocol::measurement()
@@ -73,11 +92,12 @@ void Protocol::saveMetrics()
 
 void Protocol::angles_generator()
 {
+    // generate all the angle for up to max depth
     // set seed
     init_genrand(837); // Equivalent to np.random.seed(837)
 
     int angles_per_layer = 2*this->_qubits;
-    int total_angles = angles_per_layer*this->_depth;
+    int total_angles = angles_per_layer*_max_depth;
     cout << "Generating angles.\n";
 
     // get angle values
@@ -92,4 +112,10 @@ void Protocol::destroy()
 {
     cout << "Destroy Q Register\n";
     destroyQureg(this->ds_qreg);
+};
+
+void Protocol::somefunc()
+{
+    cout << "Protocol function called." << endl;
+    backend->some_backendfunc();
 };
