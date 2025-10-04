@@ -27,6 +27,7 @@ void Swap::metrics()
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis(0.0, 1.0);
+
         for (int i = 0; i < groups; i++)
         {
             cout << "group: " << i << endl;
@@ -68,7 +69,7 @@ void Swap::metrics()
         //for each sample
 
         double pur_mom = median(pur_means);
-        double R2d_mom = (-1 * log2(pur_mom)) / ds_qreg.numQubits;
+        double R2d_mom = (-1 * log2(pur_mom)) / _qubits;
             
         pur_samples.push_back(pur_mom);
         R2d_samples.push_back(R2d_mom);
@@ -84,7 +85,7 @@ void Swap::metrics()
     // Std for purity
     double accum = 0.0;
     for (double x : pur_samples) {
-        accum += (x - pur_mean) * (x - pur_mean);
+        accum += pow(abs(x - pur_mean), 2);
     }
     double pur_std = sqrt(accum / pur_samples.size());
     all_purity_std.push_back(pur_std);
@@ -97,11 +98,14 @@ void Swap::metrics()
     //std for r2d
     accum = 0.0;
     for (double x : R2d_samples) {
-        accum += (x - R2d_mean) * (x - R2d_mean);
+        accum += pow(abs(x - R2d_mean),2);
     }
     double R2d_std = sqrt(accum / R2d_samples.size());
     all_R2d_std.push_back(R2d_std);
 
+    // clean up
+    pur_samples.clear();
+    R2d_samples.clear();
 };
 
 double Swap::median(vector<double> &means) {

@@ -25,8 +25,8 @@ protected:
     vector<double> all_R2d_std;
     vector<double> pur_samples;
     vector<double> R2d_samples;
-    int num_measurements = 320000; // number of measurements
-    int groups = 5;
+    int num_measurements = 307200; // number of measurements
+    int groups = 3;
     int shots =  static_cast<int>(ceil(double(num_measurements / groups))); //K
     int samples = 3; // samples
     map<string, int> counts;

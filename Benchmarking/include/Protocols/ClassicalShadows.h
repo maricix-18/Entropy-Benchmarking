@@ -33,9 +33,9 @@ protected:
     vector<int> key;
     map<string, int> counts; // map for unique bitstring gathering
     vector<double> means;
-    double num_measurements = 320; // M
-    int shots = 1000; // k
-    int groups = 5;
+    double num_measurements = 3072; // M
+    int shots = 100; // k
+    int groups = 3;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
 
