@@ -6,14 +6,14 @@ import numpy as np
 matplotlib.use('TkAgg') 
 # Load JSON data from two file
 
-print("Read data")
+# print("Read data")
 with open('C:/Users/maria/Desktop/Entropy_Benchmark_quest/Entropy-Benchmarking/Benchmarking/Data_test/DensityMatrices_metrics/Q5.json') as f:
     data1 = json.load(f)
 
 with open('C:/Users/maria/Desktop/Entropy_Benchmark_quest/Entropy-Benchmarking/Benchmarking/Data_test/Swap_metrics/Q5.json') as f:
     data2 = json.load(f)
 
-# with open('C:/Users/maria/Desktop/Entropy_Benchmark_quest/Entropy-Benchmarking/Benchmarking/Data_test/ClassicalShadows_metrics/Q3_D10.json') as f:
+# with open('C:/Users/maria/Desktop/Entropy_Benchmark_quest/Entropy-Benchmarking/Benchmarking/Data_test/ClassicalShadows_metrics/Q3.json') as f:
 #     data3 = json.load(f)
 
 print("show data")
@@ -47,7 +47,7 @@ plt.figure(figsize=(8,5))
 plt.plot(x, data1['all_R2d_diff_n'], 'k-', label='exact')
 plt.errorbar(x, data2['all_R2d_mean_diff_n'], yerr=data2['all_R2d_std_diff_n'],
              fmt='none',ecolor='r', capsize=5,label='R2d Swap')
-# plt.errorbar(x, data3['all_pur_mean_diff_n'], yerr=data3['all_pur_std_diff_n'],
+# plt.errorbar(x, data3['all_R2d_mean_diff_n'], yerr=data3['all_R2d_std_diff_n'],
 #             fmt='none', ecolor='b', capsize=5, label='CS')
 
 plt.xlabel('Depth')

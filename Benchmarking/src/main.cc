@@ -11,7 +11,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 5;
+    int qubits = 3;
     int max_depth = 15;
 
     int backend_choice;

@@ -5,12 +5,12 @@ void Swap::somefunc() {
     backend->some_backendfunc();
 };
 
-int Swap::binarySearchCDF(const std::vector<double>& cdf, double value) {
-    // Find the index where value would be inserted to keep order
-    // This corresponds to the sampled outcome
-    auto it = std::lower_bound(cdf.begin(), cdf.end(), value);
-    if (it == cdf.end()) return cdf.size() - 1;
-    return std::distance(cdf.begin(), it);
+int Swap::binarySearchCDF(vector<double>& cdf, double value) {
+    auto it = lower_bound(cdf.begin(), cdf.end(), value);
+
+    if (it == cdf.end())
+        return cdf.size() - 1;
+    return distance(cdf.begin(), it);
 };
 
 void Swap::metrics()
@@ -23,10 +23,10 @@ void Swap::metrics()
     for (int n = 0; n < samples; n++)
     {
         vector<double> pur_means;
-      // Random number generator setup
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(0.0, 1.0);
+       // Random number generator setup - sampling
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_real_distribution<> dis(0.0, 1.0);
 
         for (int i = 0; i < groups; i++)
         {
@@ -203,13 +203,13 @@ void Swap::saveMetrics()
         ifstream in(filename);
         if (in.is_open()) {
             // read your data here
-            std::cout << "File opened for reading.\n";
+            cout << "File opened for reading.\n";
         }
     } else {
         ofstream out(filename);
         if (out.is_open()) {
             // create or write initial content here
-            std::cout << "File created.\n";
+            cout << "File created.\n";
         }
     }
 
@@ -228,6 +228,6 @@ void Swap::saveMetrics()
     
     ofstream out(filename);
     if (out.is_open())
-        out << std::setw(4) << j << std::endl;
+        out << setw(4) << j << endl;
 };
 

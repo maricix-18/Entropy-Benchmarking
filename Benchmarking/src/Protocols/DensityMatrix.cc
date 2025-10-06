@@ -41,13 +41,13 @@ void DensityMatrix::saveMetrics()
         ifstream in(filename);
         if (in.is_open()) {
             // read your data here
-            std::cout << "File opened for reading.\n";
+            cout << "File opened for reading.\n";
         }
     } else {
         ofstream out(filename);
         if (out.is_open()) {
             // create or write initial content here
-            std::cout << "File created.\n";
+            cout << "File created.\n";
         }
     }
 
@@ -60,5 +60,5 @@ void DensityMatrix::saveMetrics()
     
     ofstream out(filename);
     if (out.is_open())
-        out << std::setw(4) << j << std::endl;
+        out << setw(4) << j << endl;
 };

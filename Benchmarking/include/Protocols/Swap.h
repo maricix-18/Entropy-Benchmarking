@@ -2,11 +2,8 @@
 #define SWAP_H
 
 #include "Protocol.h"
-#include <fstream>
-#include <sys/stat.h>
 #include <random>
 #include <string>
-#include <iomanip>
 #include <Eigen/Eigenvalues>
 #include "nlohmann/json.hpp"
 
@@ -51,7 +48,7 @@ protected:
 
     double median(vector<double> &means);
 
-    int binarySearchCDF(const std::vector<double>& cdf, double value);
+    int binarySearchCDF(vector<double>& cdf, double value);
 
 };
 

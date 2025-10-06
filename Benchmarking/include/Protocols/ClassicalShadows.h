@@ -4,8 +4,6 @@
 #include "Protocol.h"
 #include <fstream>
 #include <random>
-#include <iomanip>
-#include <sys/stat.h>
 #include <Eigen/Eigenvalues>
 #include "nlohmann/json.hpp"
 
@@ -33,9 +31,9 @@ protected:
     vector<int> key;
     map<string, int> counts; // map for unique bitstring gathering
     vector<double> means;
-    double num_measurements = 3072; // M
-    int shots = 100; // k
-    int groups = 3;
+    double num_measurements = 320; // M
+    int shots = 1000; // k
+    int groups = 5;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
 
@@ -54,14 +52,15 @@ protected:
 
     void beta_vals_paulibasis();
 
-    double median(std::vector<double> &vec);
+    double median(vector<double> &vec);
 
     void gatherShadows();
     
     vector<int> generate_measurement_setting();
 
     void classicalShadows_protocol();
-    int binarySearchCDF(const std::vector<double>& cdf, double value);
+
+    int binarySearchCDF(vector<double>& cdf, double value);
 
 };
 

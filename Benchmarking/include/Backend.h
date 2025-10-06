@@ -18,8 +18,6 @@ class Backend
     virtual void applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array, int &depth);
 
     virtual void measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis);
-    
-    //virtual ~Backend() = default;
 
 };
 

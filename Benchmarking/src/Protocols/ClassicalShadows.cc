@@ -173,12 +173,13 @@ void ClassicalShadows::classicalShadows_protocol() {
     }
 };
 // new sampling method
-int ClassicalShadows::binarySearchCDF(const std::vector<double>& cdf, double value) {
+int ClassicalShadows::binarySearchCDF(vector<double>& cdf, double value) {
     // Find the index where value would be inserted to keep order
     // This corresponds to the sampled outcome
-    auto it = std::lower_bound(cdf.begin(), cdf.end(), value);
-    if (it == cdf.end()) return cdf.size() - 1;
-    return std::distance(cdf.begin(), it);
+    auto it = lower_bound(cdf.begin(), cdf.end(), value);
+    if (it == cdf.end())
+        return cdf.size() - 1;
+    return distance(cdf.begin(), it);
 };
 
 void ClassicalShadows::gatherShadows() {
