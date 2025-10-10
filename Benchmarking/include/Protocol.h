@@ -4,6 +4,11 @@
 #include "quest.h"
 #include "Backend.h"
 #include <fstream>
+extern "C"
+{
+#include "./mt19937ar.h"
+
+}
 using namespace std;
 
 #define PI 3.14159265358979323846

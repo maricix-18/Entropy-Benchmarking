@@ -178,8 +178,8 @@ int ClassicalShadows::binarySearchCDF(vector<double>& cdf, double value) {
     // This corresponds to the sampled outcome
     auto it = lower_bound(cdf.begin(), cdf.end(), value);
     if (it == cdf.end())
-        return cdf.size() - 1;
-    return distance(cdf.begin(), it);
+        return int(cdf.size() - 1);
+    return int(distance(cdf.begin(), it));
 };
 
 void ClassicalShadows::gatherShadows() {
@@ -271,7 +271,7 @@ vector<int> ClassicalShadows::generate_measurement_setting()
 
 
 double ClassicalShadows::median(vector<double> &vec) {
-    int n = vec.size();
+    int n = int(vec.size());
     sort(vec.begin(), vec.end());
     if (n % 2 == 1) {
         // odd number

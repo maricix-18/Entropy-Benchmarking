@@ -9,8 +9,8 @@ int Swap::binarySearchCDF(vector<double>& cdf, double value) {
     auto it = lower_bound(cdf.begin(), cdf.end(), value);
 
     if (it == cdf.end())
-        return cdf.size() - 1;
-    return distance(cdf.begin(), it);
+        return int(cdf.size() - 1);
+    return int(distance(cdf.begin(), it));
 };
 
 void Swap::metrics()
@@ -147,7 +147,7 @@ int Swap::parityBit(string& bitstring) {
 
 int Swap::swapTestOutcome(string &outcome)
 {
-    int num_qubits = outcome.length() / 2;
+    int num_qubits = int(outcome.length() / 2);
 
     string str1 = outcome.substr(0, num_qubits);
     string str2 = outcome.substr(num_qubits, 2*num_qubits);

@@ -41,7 +41,8 @@ target_include_directories(entropy_benchmarking PUBLIC
 "../eigen"
 )
 
-#link QuEST library
-target_link_libraries(entropy_benchmarking "${QuEST_lib}/QuEST.lib")
+#link QuEST library - windows - with debug folder
+target_link_libraries(entropy_benchmarking "${QuEST_lib}/Debug/QuEST.lib")
 
+# linux
 #target_link_libraries(entropy_benchmarking "${QuEST_lib}/libQuEST.so")
