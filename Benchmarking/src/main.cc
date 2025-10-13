@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
     int fn = qubits;
     protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
 
-    for (int curr_depth = 4; curr_depth <= max_depth; curr_depth++)
+    for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
     {
         cout << " - Depth " << curr_depth << endl;
         protocol_ptr->setQureg();

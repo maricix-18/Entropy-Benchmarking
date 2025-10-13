@@ -2,10 +2,6 @@
 #define SWAP_H
 
 #include "Protocol.h"
-#include <random>
-#include <string>
-#include <Eigen/Eigenvalues>
-#include "nlohmann/json.hpp"
 
 typedef complex<double> Complex_value;
 typedef Eigen::MatrixXcd Eigen_matrix;

@@ -2,10 +2,6 @@
 #define DM_H
 
 #include "Protocol.h"
-#include <fstream>
-#include <sys/stat.h>
-#include <Eigen/Eigenvalues>
-#include "nlohmann/json.hpp"
 
 typedef complex<double> Complex_value;
 typedef Eigen::MatrixXcd Eigen_matrix;
