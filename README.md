@@ -1,8 +1,8 @@
 # Entropy-Benchmarking
  Toolkit for analysing the accumulation of Renyi-2 entropy density in a noisy quantum circuit, based on https://github.com/MDemarty/Entropy_Benchmarking.git using QuEST library (https://github.com/QuEST-Kit/QuEST.git).
 
-## How to run 
-Run the setup.sh file to build the respective packages.\
+## How to run (linux)
+Run the setup.sh file to get necessary packages.\
 Run the benchmark with run.sh.
 
 ## Windows
@@ -15,4 +15,3 @@ C++ - at least 14
 
 ## src/main
 for setting qubit and depth value for now\
-uncomment to get data for multiple depth sizes

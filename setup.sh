@@ -52,15 +52,7 @@ if [ -d "build" ]; then
     rm -rf build
 fi
 
-echo "Building Benchmarking Project..."
-mkdir build
-cd build
-cmake ..
-make
 # out of build directory
-cd ..
-
-# out of Benchmarking directory
 cd ..
 
 echo "All done."

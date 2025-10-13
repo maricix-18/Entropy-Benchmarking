@@ -1,6 +1,4 @@
 #include <iostream>
-#include <string>
-#include <memory>
 #include "Backend.h"
 #include "Simulator.h"
 #include "Protocol.h"
@@ -69,8 +67,6 @@ int main(int argc, char* argv[]) {
         protocol_ptr = make_unique<DensityMatrix>();
     }
    
-    int st = 0;
-    int fn = qubits;
     protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
 
     for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)

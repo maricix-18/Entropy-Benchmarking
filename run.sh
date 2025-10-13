@@ -4,6 +4,7 @@
 cd Benchmarking
 rm -rf build
 
+echo "Building Benchmarking Project..."
 mkdir build
 cd build
 cmake ..
