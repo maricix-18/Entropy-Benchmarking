@@ -1,7 +1,7 @@
 #include "Swap.h"
 
 void Swap::somefunc() { 
-    cout << "Swap protocol function called." << endl;
+    //cout << "Swap protocol function called." << endl;
     backend->some_backendfunc();
 };
 
@@ -15,13 +15,14 @@ int Swap::binarySearchCDF(vector<double>& cdf, double value) {
 
 void Swap::metrics()
 {
-    cout << "Swap metrics function called for last depth." << endl;
+    //cout << "Swap metrics function called for last depth." << endl;
     // add swap circuit
     swapLayer();
 
     // for n samples do the protocol
     for (int n = 0; n < samples; n++)
     {
+        cout << "Apply Swap Protocol for sample " << n << endl;
         vector<double> pur_means;
        // Random number generator setup - sampling
         random_device rd;
@@ -30,7 +31,7 @@ void Swap::metrics()
 
         for (int i = 0; i < groups; i++)
         {
-            cout << "group: " << i << endl;
+            //cout << "group: " << i << endl;
             size_t dim = 1ULL << ds_qreg.numQubits;  // 2^numQubits
 
             // Prepare probability vector and CDF
@@ -183,11 +184,11 @@ double Swap::estimatePurityFromSwapTest(map<string, int> &counts)
 
 void Swap::swapLayer()
 {
-    cout << "Swap layer" << endl;
+    //cout << "Swap layer" << endl;
     for (int i = 0; i < _qubits; i++) {
-        cout << "controlled x: control q" << i << " target q" << i + _qubits << endl;
+        //cout << "controlled x: control q" << i << " target q" << i + _qubits << endl;
         applyControlledPauliX(ds_qreg, i, i + _qubits);
-        cout << "hadamard q" << i << endl;
+        //cout << "hadamard q" << i << endl;
         applyHadamard(ds_qreg, i);
     }
 };

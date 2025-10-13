@@ -31,15 +31,13 @@ protected:
     vector<int> key;
     map<string, int> counts; // map for unique bitstring gathering
     vector<double> means;
-    double num_measurements = 320; // M
-    int shots = 1000; // k
-    int groups = 5;
+    double num_measurements = 3072; // M
+    int shots = 100; // k
+    int groups = 3;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
 
-    // TODO issue with subgroup number, make sure you fix it.
-    // to keep clear of errors, make sure that num_meas / groups
-    // doesn't leave remainder
+    // Needs to be an equal number of measurements per group
     int M_subgroup = static_cast<int>(ceil(double(num_measurements / groups)));
     double M_factor = 2.0 / (M_subgroup * (M_subgroup - 1));
   

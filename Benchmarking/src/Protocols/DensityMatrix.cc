@@ -1,13 +1,13 @@
 #include "DensityMatrix.h"
 
 void  DensityMatrix::somefunc() { 
-    cout << "DensityMatrix protocol function called." << endl;
+    //cout << "DensityMatrix protocol function called." << endl;
     backend->some_backendfunc();
 };
 
 void  DensityMatrix::metrics()
 {
-    cout << "DensityMatrix metrics function called for last depth." << endl;
+    //cout << "DensityMatrix metrics function called for last depth." << endl;
     int dim = int (pow(2, _qubits));
     Eigen_matrix eing_mat(dim, dim);
 
@@ -26,7 +26,7 @@ void  DensityMatrix::metrics()
     all_purity.push_back(pur);
     all_R2d.push_back(R2d);
 
-    cout<< "purity: "<< pur <<"\n"<< "R2d: " << R2d <<"\n";
+    //cout<< "purity: "<< pur <<"\n"<< "R2d: " << R2d <<"\n";
 
 };
 

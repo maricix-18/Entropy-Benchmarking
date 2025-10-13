@@ -1,7 +1,7 @@
 #include "ClassicalShadows.h"
 
 void  ClassicalShadows::somefunc() { 
-    cout << "classicalShadows protocol function called." << endl;
+    //cout << "classicalShadows protocol function called." << endl;
     backend->some_backendfunc();
 };
 
@@ -15,22 +15,22 @@ void  ClassicalShadows::metrics()
     //for n samples do the protocol
     for (int n = 0; n < samples; n++)
     {
-        cout << "Gather Shadows for sample: " << n <<endl;;
+        cout << "Gather Shadows for sample: " << n <<endl;
         gatherShadows();
 
-        cout << "Size shadow map " << shadow_map.size() <<endl;
+        //cout << "Size shadow map " << shadow_map.size() <<endl;
 
         // apply Classical Shadows protocol
         cout << "Apply Classical Shadows Protocol\n";
-        cout<< "Subgroups: "<< M_subgroup << endl;
+        //cout<< "Subgroups: "<< M_subgroup << endl;
 
         classicalShadows_protocol();
 
-        cout << "Final means values: "<<endl;
-        for (auto m:means)
-        {
-            cout << m << endl;
-        }
+        //cout << "Final means values: "<<endl;
+        // for (auto m:means)
+        // {
+        //     cout << m << endl;
+        // }
 
 
         double mom = median(means);// purity val
@@ -39,7 +39,7 @@ void  ClassicalShadows::metrics()
 
         cout << "Classical Shadows Protocol completed.\n";
 
-        cout << "Median of means (mom): " << mom << " R2d " << R2d << endl;
+        //cout << "Median of means (mom): " << mom << " R2d " << R2d << endl;
 
         // gether list of samples
         pur_samples.push_back(mom);
@@ -91,7 +91,7 @@ void ClassicalShadows::classicalShadows_protocol() {
     for (int i = 0; i < groups; i++)
     {
         // Get list of shadows of current group
-        cout << "Inside group: "<< i << endl;
+        //cout << "Inside group: "<< i << endl;
         int start_idx = i * M_subgroup;
         int end_idx = (i + 1) * M_subgroup;
 
@@ -108,7 +108,7 @@ void ClassicalShadows::classicalShadows_protocol() {
 
         // store the respective group in a list
         Shadow_map shadow_list(start_it, end_it);
-        cout << "Shadow list size for group " << i  << ": " << shadow_list.size() << endl;
+        //cout << "Shadow list size for group " << i  << ": " << shadow_list.size() << endl;
         double purity = 0.0;
 
         // Basically you do a product between each measurement settings outcomes
@@ -191,7 +191,7 @@ void ClassicalShadows::gatherShadows() {
 
     for (int j = 0; j < num_measurements; j++)
     {
-        cout << "Measurement setting no: " << j <<endl;
+        //cout << "Measurement setting no: " << j <<endl;
 
         // generate and get measurement setting
         key = generate_measurement_setting();
@@ -261,11 +261,11 @@ vector<int> ClassicalShadows::generate_measurement_setting()
         int basis = dis(gen);
         measurement_setting.push_back(basis);
     }
-    cout << "Meas setting: ";
-    for (int i = 0; i < _qubits; i++) {
-        cout << measurement_setting[i] << ", ";
-    }
-    cout << endl;
+    //cout << "Meas setting: ";
+    // for (int i = 0; i < _qubits; i++) {
+    //     cout << measurement_setting[i] << ", ";
+    // }
+    // cout << endl;
     return measurement_setting;
 };
 

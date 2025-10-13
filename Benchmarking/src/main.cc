@@ -11,7 +11,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 3;
+    int qubits = 5;
     int max_depth = 15;
 
     int backend_choice;
@@ -73,9 +73,9 @@ int main(int argc, char* argv[]) {
     int fn = qubits;
     protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
 
-    for (int curr_depth = 1; curr_depth <= max_depth; curr_depth++)
+    for (int curr_depth = 4; curr_depth <= max_depth; curr_depth++)
     {
-        cout << "- Depth " << curr_depth << endl;
+        cout << " - Depth " << curr_depth << endl;
         protocol_ptr->setQureg();
         protocol_ptr->buildCircuit(curr_depth);
         protocol_ptr->metrics();

@@ -14,7 +14,7 @@ void Protocol::initialise(Backend &_backend, int &qubits, int &max_depth)
 };
 
 void Protocol::setBackend(Backend &_backend) {
-    cout << "Setting backend in protoc0l.cc." << endl;
+    //cout << "Setting backend in protocol.cc." << endl;
     backend = &_backend;// Point the base class Backend pointer to the eg simulatr obj
 };
 
@@ -82,7 +82,7 @@ void Protocol::measurement()
    
 void Protocol::metrics()
 {
-    cout << "Protocol metrics function called." << endl;   
+    //cout << "Protocol metrics function called." << endl;
 };
 
 void Protocol::saveMetrics()
@@ -116,6 +116,6 @@ void Protocol::destroy()
 
 void Protocol::somefunc()
 {
-    cout << "Protocol function called." << endl;
+    //cout << "Protocol function called." << endl;
     backend->some_backendfunc();
 };
