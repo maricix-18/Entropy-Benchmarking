@@ -27,6 +27,7 @@ add_executable(entropy_benchmarking
  src/Protocols/DensityMatrix.cc
  src/Protocols/ClassicalShadows.cc
  src/Protocols/Swap.cc
+ src/AnalyticalModel/PurityModel.cc
 )
 
 # header files
@@ -34,6 +35,7 @@ target_include_directories(entropy_benchmarking PUBLIC
 "${CMAKE_SOURCE_DIR}/include" # this project header files 
 "${CMAKE_SOURCE_DIR}/include/Backends" # backends header files
 "${CMAKE_SOURCE_DIR}/include/Protocols" # protocol header files
+"${CMAKE_SOURCE_DIR}/include/AnalyticalModel"
 "${QuEST_lib}"
 "${QuEST}" 
 "${QuEST_build}"

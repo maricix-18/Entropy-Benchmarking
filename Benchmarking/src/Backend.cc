@@ -1,7 +1,5 @@
 #include "Backend.h"
 
-using namespace std;
-
 void Backend::some_backendfunc()
 {
     //cout << "Backend function called." << endl;
