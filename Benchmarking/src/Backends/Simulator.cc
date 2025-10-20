@@ -67,3 +67,11 @@ void Simulator::measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis
     }
     //cout<<"measuremnt for sim layer applied"<<endl;
 };
+
+double Simulator::get_p1() {
+    return p1;
+};
+
+double Simulator::get_p2() {
+    return p2;
+};

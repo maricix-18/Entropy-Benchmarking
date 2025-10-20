@@ -77,15 +77,16 @@ void DensityMatrix::saveMetrics()
     }
     for (double VnD : all_VnD) {
         j["all_VnD_diff_n"].push_back(VnD);
-
+    }
     for (double pur : all_purity) {
         j["all_pur_diff_n"].push_back(pur);
     }
     for (double R2d : all_R2d) {
         j["all_R2d_diff_n"].push_back(R2d);
     }
-    
+
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
+
 };

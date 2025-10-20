@@ -20,6 +20,9 @@ class Simulator : public Backend
 
     void measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis) override;
 
+    double get_p1() override;
+
+    double get_p2() override;
 };
 
 #endif

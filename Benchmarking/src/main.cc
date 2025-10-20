@@ -6,12 +6,13 @@
 #include "ClassicalShadows.h"
 #include "Swap.h"
 #include "PurityModel.h"
+#include "AnalyticalModel/PurityModel.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 5;
-    int max_depth = 15;
+    int qubits = 3;
+    int max_depth = 10;
 
     int backend_choice;
     int protocol;
@@ -66,7 +67,11 @@ int main(int argc, char* argv[]) {
     else if (protocol == 4)
     {
         cout << "Purity Model." << endl;
+        PurityModel purity_model;
+        purity_model.initialise(*backend_ptr, qubits, max_depth);
+
         int pur_model;
+
         cout << " Choose a purity model:" << endl;
         cout << " 1 Purity model based on global depolarising noise model." << endl;
         cout << " 2 Purity model based on global depolarising noise model + Classical Shadows measurement error." << endl;
@@ -76,15 +81,15 @@ int main(int argc, char* argv[]) {
 
         if (pur_model == 1)
         {
-            purityModel_globalDP();
+            purity_model.purityModel_globalDP();
         }
         else if (pur_model == 2)
         {
-            purityModel_globalDP_CS();
+            purity_model.purityModel_globalDP_CS();
         }
         else if (pur_model == 3)
         {
-            purityModel_globalDP_localDP();
+            purity_model.purityModel_globalDP_localDP();
         }
         else
         {
