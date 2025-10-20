@@ -5,6 +5,7 @@
 #include "DensityMatrix.h"
 #include "ClassicalShadows.h"
 #include "Swap.h"
+#include "PurityModel.h"
 
 using namespace std;
 
@@ -24,6 +25,7 @@ int main(int argc, char* argv[]) {
     cout << " 1 Density Matrix" << endl;
     cout << " 2 Classical Shadows" << endl;
     cout << " 3 Swap Test" << endl;
+    cout << " 4 Purity Model" << endl;
     cout << " Input the number of the protocol you want to use: ";
     cin >> protocol;
 
@@ -60,6 +62,37 @@ int main(int argc, char* argv[]) {
         protocol_ptr = make_unique<Swap>();
         string prot = "Swap";
         protocol_ptr->setProtocol(prot);
+    }
+    else if (protocol == 4)
+    {
+        cout << "Purity Model." << endl;
+        int pur_model;
+        cout << " Choose a purity model:" << endl;
+        cout << " 1 Purity model based on global depolarising noise model." << endl;
+        cout << " 2 Purity model based on global depolarising noise model + Classical Shadows measurement error." << endl;
+        cout << " 3 Purity model based on global depolarising noise model function of local depolarising probabilities ." << endl;
+        cout << " Input the number of the protocol you want to use: ";
+        cin >> pur_model;
+
+        if (pur_model == 1)
+        {
+            purityModel_globalDP();
+        }
+        else if (pur_model == 2)
+        {
+            purityModel_globalDP_CS();
+        }
+        else if (pur_model == 3)
+        {
+            purityModel_globalDP_localDP();
+        }
+        else
+        {
+            cout << "Invalid choice - Default - 1 Purity model based on global depolarising noise model." << endl;
+        }
+
+        cout << "All done." << endl;
+        return 0;
     }
     else 
     {

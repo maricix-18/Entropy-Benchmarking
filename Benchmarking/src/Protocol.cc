@@ -77,17 +77,14 @@ void Protocol::buildCircuit(int &curr_depth)
 
 void Protocol::measurement()
 {
-
 };
    
 void Protocol::metrics()
 {
-    //cout << "Protocol metrics function called." << endl;
 };
 
 void Protocol::saveMetrics()
 {
-    
 };
 
 void Protocol::angles_generator()
@@ -116,6 +113,5 @@ void Protocol::destroy()
 
 void Protocol::somefunc()
 {
-    //cout << "Protocol function called." << endl;
     backend->some_backendfunc();
 };
