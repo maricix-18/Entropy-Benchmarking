@@ -20,11 +20,16 @@ protected:
 
 public:
     void initialise(Backend &_backend, int &qubits, int &max_depth);
-    void purityModel_globalDP();
+
+    void purityModel_globalDP_localDP();
 
     void purityModel_globalDP_CS();
 
-    void purityModel_globalDP_localDP();
+    void purityModel_globalDP();
+
+    double PurityModel::purity_model_globalDP_CS_circuit_measerr(int &d, double &alpha_1, double &alpha_2, double &beta);
+
+    double purity_model_globalDP_CS_circuit_measerr_part_eval(int &d, double &alpha_2, double &beta);
 
 };
 #endif
