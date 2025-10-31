@@ -1,5 +1,7 @@
 #include "DensityMatrix.h"
 
+#include "quest/src/core/errors.hpp"
+
 void  DensityMatrix::somefunc() {
     backend->some_backendfunc();
 };
@@ -8,7 +10,6 @@ void  DensityMatrix::metrics()
 {
     int dim = int (pow(2, _qubits));
     Eigen_matrix eigen_mat(dim, dim);
-
     for (int i = 0; i < dim; i++)
     {
         for (int j = 0; j < dim; j++)
@@ -46,7 +47,7 @@ void  DensityMatrix::metrics()
     all_VnD.push_back(vNd);
 
     // 2. fidelity of matrix
-    fidelityMetric();
+    //fidelityMetric();
 
 };
 
@@ -56,9 +57,9 @@ void DensityMatrix::saveMetrics()
     json j;
     string filename;
     #ifdef _WIN32
-        filename = "../../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";;
+        filename = "../../Data_test/DensityMatrices_metrics/Q_fixed_" + to_string(_qubits) + ".json";;
     #else
-        filename = "../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";;
+        filename = "../Data_test/DensityMatrices_metrics/Q_fixed_" + to_string(_qubits) + ".json";;
     #endif
 
     // check file or create
@@ -166,18 +167,21 @@ void DensityMatrix::fidelityMetric() {
     string filename1;
     string filename2;
     #ifdef _WIN32
-        filename1 = "../../Data_test/DensityMatrices_metrics/MatrixComparison/Q3_D0_D5_quest.log";
+        filename1 = "../../Data_test/DensityMatrices_metrics/MatrixComparison/Q3_D0_D5_quest_fixed.log";
         filename2 = "../../Data_test/DensityMatrices_metrics/MatrixComparison/Q3_D0_D5_qiskit.log";
     #else
-        filename1 = "../Data_test/DensityMatrices_metrics/MatrixComparison/Q3_D0_D5_quest.log";
+        filename1 = "../Data_test/DensityMatrices_metrics/MatrixComparison/Q3_D0_D5_quest_fixed.log";
         filename2 = "../Data_test/DensityMatrices_metrics/MatrixComparison/Q3_D0_D5_qiskit.log";
     #endif
 
     ifstream file1(filename1);
     ifstream file2(filename2);
 
-    if (!file1 || !file2) {
-        std::cerr << "Error opening one of the files.\n";
+    if (!file1) {
+        std::cerr << "Error opening file1.\n";
+    }
+    if (!file2) {
+        std::cerr << "Error opening file2.\n";
     }
 
     int depth1, depth2;

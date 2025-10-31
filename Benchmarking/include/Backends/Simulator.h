@@ -9,8 +9,9 @@
 class Simulator : public Backend
 {
  protected:
-    double p1 = 0.008; // depolarising noise 1 qubit gate
-    double p2 = 0.054; // depolarising noise 2 qubits gate
+    //double p1 = 0.008; // depolarising noise 1 qubit gate
+    double p1 = (3*0.008)/4.0;
+    double p2 = (15*0.054)/16.0; // depolarising noise 2 qubits gate
 
  public:
     

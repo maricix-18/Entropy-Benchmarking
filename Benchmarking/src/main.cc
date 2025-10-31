@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int qubits = 3;
-    int max_depth = 5;
+    int max_depth = 10;
 
     int backend_choice;
     int protocol;
@@ -101,7 +101,6 @@ int main(int argc, char* argv[]) {
     }
    
     protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
-
     for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
     {
         cout << " - Depth " << curr_depth << endl;

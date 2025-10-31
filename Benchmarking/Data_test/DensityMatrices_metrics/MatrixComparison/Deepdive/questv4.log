@@ -1,0 +1,29 @@
+QuestV4.2
+Create Q Environment
+Create Q Register
+ Matrix after X rotation
+(0.8886557075527729,0) (0,-0.31455800893738745)
+(0,0.31455800893738745) (0.11134429244722714,0)
+depol
+Inside cpu_subroutines/ cpu_densmatr_oneQubitDepolarising_subA.cpp
+Num iterations: 1
+amps pointer = 0000027207DE38D0
+braQubit = 1
+factors.c1 = 0.9946666666666667, factors.c2 = 0.0053333333333333332, factors.c3 = 0.98933333333333329
+Thread 0 n = 0
+Thread 0 i00 = 0
+Thread 0 i01 = 1
+Thread 0 i10 = 2
+Thread 0 i11 = 3
+Thread 0 amp00 = (0.8886557075527729,0), amp11 = (0.11134429244722714,0)
+Thread 0 amps[0] updated to (0.88451004667221,0)
+Thread 0 amps[1] scaled to (0,0.31120272350872197)
+Thread 0 amps[2] scaled to (0,-0.31120272350872197)
+Thread 0 amps[3] updated to (0.11548995332779007,0)
+Matrix After depol
+(0.88451004667221,0) (0,-0.31120272350872197)
+(0,0.31120272350872197) (0.11548995332779007,0)
+Print get dens qureg
+Print eigen mat
+Saving DensityMatrix metrics to file.
+Destroy Q Register

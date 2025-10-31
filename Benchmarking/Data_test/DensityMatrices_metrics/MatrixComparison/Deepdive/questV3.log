@@ -1,0 +1,44 @@
+1Q-1D
+QuestV3.7
+Create Q Environment
+Qubits: 1 Depth: 1
+Create Q Register
+Depth: 1
+layer 1
+ X rotation
+In quest_common.c Complex alpha: -0.94268537039288613 + -0.00000000000000000i
+In quest_common.c Complex beta:  0.00000000000000000 + -0.33368292201913352i
+statevec_compactUnitaryLocal inside quest_cpu.c
+In quest_common.c Complex alpha: -0.94268537039288613 + 0.00000000000000000i
+In quest_common.c Complex beta:  -0.00000000000000000 + 0.33368292201913352i
+statevec_compactUnitaryLocal inside quest_cpu.c
+ Matrix after X rotation
+(0.8886557075527729, 0) (0, -0.31455800893738745)
+(0, 0.31455800893738745) (0.11134429244722714, 0)
+depol
+Insidequest_cpu.c densmatr_mixdepolarisingLocal with prob 0.008000
+numTasks = 4
+innerMask = 1
+outerMask = 2
+totMask = 3
+Thread 0: thisTask = 0
+Thread 0: thisPattern = 0
+Thread 0: partner = 3
+Thread 3: thisTask = 3
+Thread 2: thisTask = 2
+Thread 2: thisPattern = 2
+Thread 2: Dephasing element at task 2 (innerMask=1, outerMask=2)
+Thread 3: thisPattern = 3
+Thread 1: thisTask = 1
+Thread 1: thisPattern = 1
+Thread 1: Dephasing element at task 1 (innerMask=1, outerMask=2)
+Thread 0: realAv = 0.50000000000000000, imagAv = 0.00000000000000000
+Thread 0: Before update: real[thisTask]=0.88865570755277290 imag[thisTask]=0.00000000000000000 real[partner]=0.11134429244722714 imag[partner]=0.00000000000000000
+Thread 0: After update: real[thisTask]=0.88554646174466944 imag[thisTask]=0.00000000000000000 real[partner]=0.11445353825533057 imag[partner]=0.00000000000000000
+ Matrix after depol
+(0.88554646174466944, 0) (0, -0.3120415447463627)
+(0, 0.3120415447463627) (0.11445353825533057, 0)
+purity: 0.99203199962306032
+R2d: 0.011541437024288243
+Destroy Qreg
+Destroy Environment
