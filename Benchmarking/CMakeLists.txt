@@ -12,10 +12,8 @@ set(MAIN_SRC "${CMAKE_SOURCE_DIR}/src")
 set(MAIN_H "${CMAKE_SOURCE_DIR}/include")
 
 set(QuEST "${CMAKE_SOURCE_DIR}/../QuEST")
-
-# quest header file directory, build dir
-set(QuEST_build "${QuEST}/build/include")
 set(QuEST_lib "${QuEST}/build")
+set(QuEST_H "${QuEST}/quest/include")
 
 # executable
 add_executable(entropy_benchmarking 
@@ -37,8 +35,8 @@ target_include_directories(entropy_benchmarking PUBLIC
 "${CMAKE_SOURCE_DIR}/include/Protocols" # protocol header files
 "${CMAKE_SOURCE_DIR}/include/AnalyticalModel"
 "${QuEST_lib}"
-"${QuEST}" 
-"${QuEST_build}"
+"${QuEST_H}"
+"${QuEST}"
 "../json/include"
 "../eigen"
 )

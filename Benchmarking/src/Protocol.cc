@@ -93,7 +93,7 @@ void Protocol::angles_generator()
     // set seed
     init_genrand(837); // Equivalent to np.random.seed(837)
 
-    int angles_per_layer = 2*this->_qubits;
+    int angles_per_layer = 2*_qubits;
     int total_angles = angles_per_layer*_max_depth;
     cout << "Generating angles.\n";
 
@@ -101,14 +101,14 @@ void Protocol::angles_generator()
     for (int i = 0; i < total_angles; i++)
     {
         double r = 2 * PI * genrand_res53();
-        this->angles_array.push_back(r);
+        angles_array.push_back(r);
     }
 };
 
 void Protocol::destroy()
 {
     cout << "Destroy Q Register\n";
-    destroyQureg(this->ds_qreg);
+    destroyQureg(ds_qreg);
 };
 
 void Protocol::somefunc()

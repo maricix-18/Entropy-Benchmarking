@@ -6,13 +6,12 @@
 #include "ClassicalShadows.h"
 #include "Swap.h"
 #include "PurityModel.h"
-#include "AnalyticalModel/PurityModel.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 3;
-    int max_depth = 10;
+    int qubits = 5;
+    int max_depth = 15;
 
     int backend_choice;
     int protocol;
@@ -99,7 +98,7 @@ int main(int argc, char* argv[]) {
         cout << "All done." << endl;
         return 0;
     }
-    else 
+    else
     {
         cout << "Invalid choice - Default Density Matrix." << endl;
         protocol_ptr = make_unique<DensityMatrix>();

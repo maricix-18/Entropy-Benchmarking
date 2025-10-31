@@ -1,13 +1,11 @@
 #include "DensityMatrix.h"
 
-void  DensityMatrix::somefunc() { 
-    //cout << "DensityMatrix protocol function called." << endl;
+void  DensityMatrix::somefunc() {
     backend->some_backendfunc();
 };
 
 void  DensityMatrix::metrics()
 {
-    //cout << "DensityMatrix metrics function called for last depth." << endl;
     int dim = int (pow(2, _qubits));
     Eigen_matrix eigen_mat(dim, dim);
 
@@ -19,10 +17,11 @@ void  DensityMatrix::metrics()
             eigen_mat(i,j) = Complex_value(amplitude.real(), amplitude.imag());
         }
     }
+
     /** The matrix is first reduced to Schur form using the ComplexSchur class.
-   *  The Schur decomposition is then used to compute the eigenvalues and eigenvectors.
-   *  The cost of the computation is dominated by the cost of the Schur decomposition, which is O(n^3) where n is the size of the matrix.
-   */
+    *  The Schur decomposition is then used to compute the eigenvalues and eigenvectors.
+    *  The cost of the computation is dominated by the cost of the Schur decomposition, which is O(n^3) where n is the size of the matrix.
+    */
     EigenSolver eigen_solv;
     eigen_solv.compute(eigen_mat, false); // compute only eingenvalues, not eigenvectors
     Complex_value sum_entropy = 0;
@@ -58,8 +57,7 @@ void DensityMatrix::saveMetrics()
     #else
         filename = "../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";;
     #endif
-    cout << filename << endl;
-    //string filename = "../../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";
+
     // check file or create
     struct stat buffer;
     if (stat(filename.c_str(), &buffer) == 0) {
@@ -84,9 +82,8 @@ void DensityMatrix::saveMetrics()
     for (double R2d : all_R2d) {
         j["all_R2d_diff_n"].push_back(R2d);
     }
-
+    
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
-
 };
