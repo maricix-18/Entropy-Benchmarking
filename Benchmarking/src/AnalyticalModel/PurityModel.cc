@@ -53,7 +53,7 @@ void PurityModel::purityModel_globalDP_CS()
         // pur = purity_fit(alpha_1_optim_classim, alpha_2_optim_classim, beta_optim_classim, d);
 
         //double pur = (1 - pow(2,(-_qubits)))*(exp(-2*(alpha_1*_qubits*(2*d) + alpha_2*(_qubits-1)*d+ beta*_qubits)) - 1) + 1;
-        all_pur.push_back(pur);
+       // all_pur.push_back(pur);
     }
 };
 

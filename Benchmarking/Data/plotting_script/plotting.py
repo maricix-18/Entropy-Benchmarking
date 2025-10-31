@@ -5,10 +5,10 @@ import numpy as np
 matplotlib.use('TkAgg') 
 
 # Make sure you're inside the plotting_script directory
-with open('../../Data_test/DensityMatrices_metrics/Q5.json') as f:
+with open('../../Data_test/DensityMatrices_metrics/Q3.json') as f:
     data1 = json.load(f)
 
-with open('../../Data_test/Swap_metrics/Q5_m307200_g3_s3.json') as f:
+with open('../../Data_test/Swap_metrics/Q3_m3000_g3_s3.json') as f:
     data2 = json.load(f)
 
 with open('../../Data_test/ClassicalShadows_metrics/Q3_m320_k1000_g5_s3.json') as f:
@@ -32,8 +32,8 @@ plt.figure(figsize=(8,5))
 plt.plot(x, data1['all_pur_diff_n'], 'k-', label='exact')
 plt.errorbar(x, data2['all_pur_mean_diff_n'], yerr=data2['all_pur_std_diff_n'],
              fmt='none',ecolor='r', capsize=5, label='Swap')
-# plt.errorbar(x, data3['all_pur_mean_diff_n'], yerr=data3['all_pur_std_diff_n'],
-#             fmt='none', ecolor='b', capsize=5, label='Classical Shadows')
+plt.errorbar(x, data3['all_pur_mean_diff_n'], yerr=data3['all_pur_std_diff_n'],
+            fmt='none', ecolor='b', capsize=5, label='Classical Shadows')
 
 plt.xticks(x)
 plt.xlabel('Depth')
@@ -48,8 +48,8 @@ plt.figure(figsize=(8,5))
 plt.plot(x, data1['all_R2d_diff_n'], 'k-', label='exact')
 plt.errorbar(x, data2['all_R2d_mean_diff_n'], yerr=data2['all_R2d_std_diff_n'],
              fmt='none',ecolor='r', capsize=5,label='Swap')
-# plt.errorbar(x, data3['all_R2d_mean_diff_n'], yerr=data3['all_R2d_std_diff_n'],
-#             fmt='none', ecolor='b', capsize=5, label='Classical Shadows')
+plt.errorbar(x, data3['all_R2d_mean_diff_n'], yerr=data3['all_R2d_std_diff_n'],
+            fmt='none', ecolor='b', capsize=5, label='Classical Shadows')
 
 plt.xticks(x)
 plt.xlabel('Depth')

@@ -1,12 +1,11 @@
 #include "Simulator.h"
 
 void Simulator::some_backendfunc() {
-    //cout << "Simulator backend function called." << endl;
 };
 
 void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<double> &angles_array, int &depth)
 {
-    // keep trakc of current angle pos of current depth
+    // keep track of current angle pos of current depth
     int angl_pos = 2 * (fn_qubit - st_qubit) * (depth - 1); // starting pos for the angle array / depth
 
     for (int q = st_qubit; q < fn_qubit; q++)
@@ -36,15 +35,12 @@ void Simulator::applyLayer(Qureg &ds_qreg, int &st_qubit, int &fn_qubit, vector<
 
 void Simulator::measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis)
 {
-    //cout << "Simulator::measurementLayer called with " << qubits << " qubits." << endl;
     for (int j = 0; j < qubits; j++)
     {
-        //cout<< "Applying meas " << measurement_setting[j]<< " on qubit " << j <<endl;
         if (basis[j] == 0) 
         {
             // X basis measurement -- apply H
             applyHadamard(ds_qreg, j);
-            //cout<< "applied hadamard"<<endl;
         }
         else if (basis[j] == 1)
         {
@@ -56,7 +52,6 @@ void Simulator::measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis
         }
         // Z basis measurement -- identity
     }
-    //cout<<"measuremnt for sim layer applied"<<endl;
 };
 
 double Simulator::get_p1() {

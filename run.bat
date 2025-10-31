@@ -23,7 +23,9 @@ cmake --build .
 
 REM currently in debug mode
 
-Debug\entropy_benchmarking.exe
+cd Debug
+entropy_benchmarking.exe
 
+cd ..
 cd ..
 cd ..

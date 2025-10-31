@@ -1,14 +1,11 @@
 #include "ClassicalShadows.h"
 
-void  ClassicalShadows::somefunc() { 
-    //cout << "classicalShadows protocol function called." << endl;
+void  ClassicalShadows::somefunc() {
     backend->some_backendfunc();
 };
 
 void  ClassicalShadows::metrics()
 {
-    cout << fixed;
-    cout << setprecision(17);
 
     beta_vals_paulibasis(); // if pauli basis measurements are used 
 
@@ -18,28 +15,15 @@ void  ClassicalShadows::metrics()
         cout << "Gather Shadows for sample: " << n <<endl;
         gatherShadows();
 
-        //cout << "Size shadow map " << shadow_map.size() <<endl;
-
-        // apply Classical Shadows protocol
         cout << "Apply Classical Shadows Protocol\n";
-        //cout<< "Subgroups: "<< M_subgroup << endl;
 
         classicalShadows_protocol();
-
-        //cout << "Final means values: "<<endl;
-        // for (auto m:means)
-        // {
-        //     cout << m << endl;
-        // }
-
 
         double mom = median(means);// purity val
 
         double R2d = (-1 * log2(mom)) / _qubits; // R2d val
 
         cout << "Classical Shadows Protocol completed.\n";
-
-        //cout << "Median of means (mom): " << mom << " R2d " << R2d << endl;
 
         // gether list of samples
         pur_samples.push_back(mom);
@@ -81,7 +65,6 @@ void  ClassicalShadows::metrics()
     // clean up
     pur_samples.clear();
     R2d_samples.clear();
-
 };
 
 void ClassicalShadows::classicalShadows_protocol() {
@@ -91,7 +74,6 @@ void ClassicalShadows::classicalShadows_protocol() {
     for (int i = 0; i < groups; i++)
     {
         // Get list of shadows of current group
-        //cout << "Inside group: "<< i << endl;
         int start_idx = i * M_subgroup;
         int end_idx = (i + 1) * M_subgroup;
 
@@ -108,7 +90,6 @@ void ClassicalShadows::classicalShadows_protocol() {
 
         // store the respective group in a list
         Shadow_map shadow_list(start_it, end_it);
-        //cout << "Shadow list size for group " << i  << ": " << shadow_list.size() << endl;
         double purity = 0.0;
 
         // Basically you do a product between each measurement settings outcomes
@@ -172,10 +153,10 @@ void ClassicalShadows::classicalShadows_protocol() {
         means.push_back(purity);
     }
 };
-// new sampling method
+
+// sampling method
 int ClassicalShadows::binarySearchCDF(vector<double>& cdf, double value) {
     // Find the index where value would be inserted to keep order
-    // This corresponds to the sampled outcome
     auto it = lower_bound(cdf.begin(), cdf.end(), value);
     if (it == cdf.end())
         return int(cdf.size() - 1);
@@ -191,12 +172,10 @@ void ClassicalShadows::gatherShadows() {
 
     for (int j = 0; j < num_measurements; j++)
     {
-        //cout << "Measurement setting no: " << j <<endl;
-
         // generate and get measurement setting
         key = generate_measurement_setting();
 
-        // Sampling 2
+        // Sampling
         Qureg clone;
         clone = createCloneQureg(ds_qreg);
         backend->measurementLayer(clone, _qubits, key);
@@ -261,11 +240,7 @@ vector<int> ClassicalShadows::generate_measurement_setting()
         int basis = dis(gen);
         measurement_setting.push_back(basis);
     }
-    //cout << "Meas setting: ";
-    // for (int i = 0; i < _qubits; i++) {
-    //     cout << measurement_setting[i] << ", ";
-    // }
-    // cout << endl;
+
     return measurement_setting;
 };
 
@@ -287,7 +262,12 @@ void ClassicalShadows::saveMetrics()
 {
     cout << "Saving Classical shadows metrics to file." << endl;
     json j;
-    string filename = "../../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) + ".json";
+    string filename = "../../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) +
+                                                                "_m" + to_string((int)num_measurements) +
+                                                                "_k"+ to_string(shots) +
+                                                                "_g"+ to_string(groups) +
+                                                                "_s"+ to_string(samples) +
+                                                                    ".json";
     // check file or create
     struct stat buffer;
     if (stat(filename.c_str(), &buffer) == 0) {

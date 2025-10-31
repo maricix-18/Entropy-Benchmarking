@@ -1,7 +1,6 @@
 #include "Swap.h"
 
-void Swap::somefunc() { 
-    //cout << "Swap protocol function called." << endl;
+void Swap::somefunc() {
     backend->some_backendfunc();
 };
 
@@ -15,7 +14,6 @@ int Swap::binarySearchCDF(vector<double>& cdf, double value) {
 
 void Swap::metrics()
 {
-    //cout << "Swap metrics function called for last depth." << endl;
     // add swap circuit
     swapLayer();
 
@@ -31,7 +29,6 @@ void Swap::metrics()
 
         for (int i = 0; i < groups; i++)
         {
-            //cout << "group: " << i << endl;
             size_t dim = 1ULL << ds_qreg.numQubits;  // 2^numQubits
 
             // Prepare probability vector and CDF
@@ -68,7 +65,6 @@ void Swap::metrics()
             counts.clear();
         }
         //for each sample
-
         double pur_mom = median(pur_means);
         double R2d_mom = (-1 * log2(pur_mom)) / _qubits;
             
@@ -184,11 +180,8 @@ double Swap::estimatePurityFromSwapTest(map<string, int> &counts)
 
 void Swap::swapLayer()
 {
-    //cout << "Swap layer" << endl;
     for (int i = 0; i < _qubits; i++) {
-        //cout << "controlled x: control q" << i << " target q" << i + _qubits << endl;
         applyControlledPauliX(ds_qreg, i, i + _qubits);
-        //cout << "hadamard q" << i << endl;
         applyHadamard(ds_qreg, i);
     }
 };
@@ -197,7 +190,11 @@ void Swap::saveMetrics()
 {
     cout << "Saving Swap metrics to file." << endl;
     json j;
-    string filename = "../../Data_test/Swap_metrics/Q" + to_string(_qubits) + ".json";
+    string filename = "../../Data_test/Swap_metrics/Q" + to_string(_qubits) +
+                                                    "_m" + to_string(num_measurements) +
+                                                    "_g"+ to_string(groups) +
+                                                    "_s"+ to_string(samples) +
+                                                        ".json";
     // check file or create
     struct stat buffer;
     if (stat(filename.c_str(), &buffer) == 0) {
