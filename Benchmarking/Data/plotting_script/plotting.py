@@ -35,8 +35,8 @@ print("fields: ", fields)
 
 
 x = np.arange(len(data1['all_pur_diff_n']))  # depth axis
-x4 = np.arange(len(data4['all_pur_diff_n']))  # depth axis for data2
-x5 = np.arange(len(data5['all_pur_diff_n'])) 
+x4 = np.arange(len(data4['all_pur_diff_n']))  # LDN
+x5 = data5['depth_tab_more_points'] # CS
 # ---- Plot Pur ----
 plt.figure(figsize=(8,5))
 plt.plot(x, data1['all_pur_diff_n'], 'k-', label='exact')
@@ -44,8 +44,8 @@ plt.plot(x, data1['all_pur_diff_n'], 'k-', label='exact')
 #              fmt='none',ecolor='r', capsize=5, label='Swap')
 # plt.errorbar(x, data3['all_pur_mean_diff_n'], yerr=data3['all_pur_std_diff_n'],
 #             fmt='none', ecolor='b', capsize=5, label='Classical Shadows') 
-plt.plot(x4, data5['all_pur_diff_n'], label='PM_CS', linestyle='dotted')
-plt.plot(x5, data4['all_pur_diff_n'], label='PM_LDN', linestyle='dashed')
+#plt.plot(x4, data4['all_pur_diff_n'], label='PM_LDN', linestyle='dotted')
+plt.plot(x5, data5['all_pur_diff_n'], label='PM_CS', linestyle='dashed')
 
 
 

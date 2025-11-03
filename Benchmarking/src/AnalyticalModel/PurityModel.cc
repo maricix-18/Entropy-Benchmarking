@@ -126,7 +126,7 @@ void PurityModel::purityModel_globalDP_CS()
     iota(depth_tab.begin(), depth_tab.end(), 0);
 
     // 3. depth_tab_more_points np.linspace(depth_min, depth_max+1, 1000)
-    vector<double> depth_tab_more_points = linspace(0, _max_depth+1, 1000);
+    depth_tab_more_points = linspace(0, _max_depth+1, 1000);
 
     // 4. fit curve based on data
     // popt_classim, _ = curve_fit(purity_model_globalDP_CS_circuit_measerr_part_eval, depth tab, short_metrics_classim, bounds=(0,1))
@@ -183,6 +183,9 @@ void PurityModel::saveMetrics()
     }
     for (double R2d : all_R2d) {
         j["all_R2d_diff_n"].push_back(R2d);
+    }
+    for (double dtbm : depth_tab_more_points) {
+        j["depth_tab_more_points"].push_back(dtbm);
     }
 
     ofstream out(filename);

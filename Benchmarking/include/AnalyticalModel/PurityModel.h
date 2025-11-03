@@ -25,6 +25,7 @@ protected:
     double p2;
     vector<double> all_pur;
     vector<double> all_R2d;
+    vector<double> depth_tab_more_points;
 
 public:
     void initialise(Backend &_backend, int &qubits, int &max_depth);
