@@ -9,8 +9,10 @@
 class Simulator : public Backend
 {
  protected:
-    double p1 = (3*0.008)/4.0; // depolarising noise 1 qubit gate
-    double p2 = (15*0.054)/16.0; // depolarising noise 2 qubits gate
+    double p1_local = 0.008;
+    double p2_local = 0.054;
+    double p1 = (3*p1_local)/4.0; // depolarising noise 1 qubit gate
+    double p2 = (15*p2_local)/16.0; // depolarising noise 2 qubits gate
 
  public:
     
@@ -20,9 +22,9 @@ class Simulator : public Backend
 
     void measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis) override;
 
-    double get_p1() override;
+    double get_p1_local() override;
 
-    double get_p2() override;
+    double get_p2_local() override;
 };
 
 #endif

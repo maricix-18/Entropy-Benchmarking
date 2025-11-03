@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(entropy_benchmarking
@@ -14,6 +14,8 @@ set(MAIN_H "${CMAKE_SOURCE_DIR}/include")
 set(QuEST "${CMAKE_SOURCE_DIR}/../QuEST")
 set(QuEST_lib "${QuEST}/build")
 set(QuEST_H "${QuEST}/quest/include")
+
+
 
 # executable
 add_executable(entropy_benchmarking 

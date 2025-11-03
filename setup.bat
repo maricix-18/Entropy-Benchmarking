@@ -30,7 +30,6 @@ IF NOT EXIST json (
     echo json directory already exists.
 )
 
-
 REM Get eigen lib for cpp
 IF NOT EXIST eigen (
     echo Cloning eigen repository...
@@ -39,6 +38,22 @@ IF NOT EXIST eigen (
     echo eigen directory already exists.
 )
 
+REM to be built
+REM Get ceres-solver lib for cpp
+IF NOT EXIST ceres-solver(
+    echo Cloning cere-solver repository...
+    git clone https://ceres-solver.googlesource.com/ceres-solver
+) ELSE (
+    echo ceres-solver directory already exists.
+)
+
+Rem  Get abseil lib for cpp
+IF NOT EXIST abseil-cpp(
+    echo Cloning abseil-cpp repository...
+     git clone https://github.com/abseil/abseil-cpp.git
+) ELSE (
+    echo abseil-cpp directory already exists.
+)
 
 REM Check if Benchmarking is built
 cd Benchmarking

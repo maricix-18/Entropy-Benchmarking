@@ -54,10 +54,10 @@ void Simulator::measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis
     }
 };
 
-double Simulator::get_p1() {
-    return p1;
+double Simulator::get_p1_local() {
+    return p1_local;
 };
 
-double Simulator::get_p2() {
-    return p2;
+double Simulator::get_p2_local() {
+    return p2_local;
 };

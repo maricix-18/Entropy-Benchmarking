@@ -34,6 +34,14 @@ else
     echo "json directory already exists."
 fi
 
+# get ceres-solver lib for cpp - no need to build
+if [ ! -d "ceres-solver" ]; then
+    echo "Cloning ceres-solver repository..."
+     git clone https://ceres-solver.googlesource.com/ceres-solver
+
+else
+    echo "ceres-solver directory already exists."
+fi
 
 # get eigen lib for cpp - no need to build
 if [ ! -d "eigen" ]; then

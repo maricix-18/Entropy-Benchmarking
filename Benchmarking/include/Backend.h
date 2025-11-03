@@ -19,9 +19,9 @@ class Backend
 
     virtual void measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis);
 
-    virtual double get_p1();
+    virtual double get_p1_local();
 
-    virtual double get_p2();
+    virtual double get_p2_local();
 };
 
 #endif

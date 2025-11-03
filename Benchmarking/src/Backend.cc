@@ -14,10 +14,10 @@ void Backend::measurementLayer(Qureg &ds_qreg, int &qubits, vector<int> &basis)
 {
 };
 
-double Backend::get_p1() {
+double Backend::get_p1_local() {
     return 0;
 };
 
-double Backend::get_p2() {
+double Backend::get_p2_local() {
     return 0;
 };

@@ -10,7 +10,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 5;
+    int qubits = 3;
     int max_depth = 15;
 
     int backend_choice;
@@ -73,22 +73,26 @@ int main(int argc, char* argv[]) {
 
         cout << " Choose a purity model:" << endl;
         cout << " 1 Purity model based on global depolarising noise model." << endl;
-        cout << " 2 Purity model based on global depolarising noise model + Classical Shadows measurement error." << endl;
+        cout << " 2 Purity model based on global depolarising noise model + Classical Shadows." << endl;
         cout << " 3 Purity model based on global depolarising noise model function of local depolarising probabilities ." << endl;
         cout << " Input the number of the protocol you want to use: ";
         cin >> pur_model;
 
         if (pur_model == 1)
         {
-            purity_model.purityModel_globalDP();
+            cout << "Not implemented yet."<<endl;
+            // purity_model.purityModel_globalDP();
+
         }
         else if (pur_model == 2)
         {
             purity_model.purityModel_globalDP_CS();
+            purity_model.saveMetrics();
         }
         else if (pur_model == 3)
         {
             purity_model.purityModel_globalDP_localDP();
+            purity_model.saveMetrics();
         }
         else
         {
