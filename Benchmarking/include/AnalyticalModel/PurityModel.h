@@ -37,7 +37,15 @@ public:
 
     void purityModel_globalDP_localDP();
 
-    double purityModel_globalDP_localDP_value(double &depth);
+    double purityModel_globalDP_localDP_value(double &depth, double &alpha_1, double &alpha_2);
+
+    double purityModel_globalDP_localDP_R2d_model_part_eval(double &depth, double &p_1, double &p_2);
+
+    void purityModel_globalDP_CS();
+
+    double purity_model_globalDP_CS_circuit_measerr(double &d, double &alpha_1, double &alpha_2, double &beta);
+
+    double purity_model_globalDP_CS_circuit_measerr_part_eval(double &d, double &alpha_2, double &beta);
 
     void depth_tab_more_points_populate();
 
@@ -61,9 +69,7 @@ public:
         {
             if (model_name == "purity_model_globalDP") {
                 double alpha_2 = params[0];
-                // double beta = params[1];
                 for (int i = 0; i < values(); ++i) {
-                    // Call the member function via the parent instance
                     double model_val = model.purityModel_globalDP_R2d_model_part_eval(xdata[i], alpha_2);
                     residuals[i] = ydata[i] - model_val;
                 }
@@ -72,13 +78,17 @@ public:
                 double alpha_2 = params[0];
                 double beta = params[1];
                 for (int i = 0; i < values(); ++i) {
-                    // Call the member function via the parent instance
                     double model_val = model.purity_model_globalDP_CS_circuit_measerr_part_eval(xdata[i], alpha_2, beta);
                     residuals[i] = ydata[i] - model_val;
                 }
             }
             else if (model_name == "purity_model_localDP") {
-                // nothing here
+                double p_1 = params[0];
+                double p_2 = params[1];
+                for (int i = 0; i < values(); ++i) {
+                    double model_val = model.purityModel_globalDP_localDP_R2d_model_part_eval(xdata[i], p_1, p_2);
+                    residuals[i] = ydata[i] - model_val;
+                }
             }
 
              return 0;
@@ -88,13 +98,6 @@ public:
     pair<Eigen::VectorXd, Eigen::MatrixXd> curve_fit_eigen(string &name, vector<double>& xdata,vector<double>& ydata,Eigen::VectorXd p0,Eigen::VectorXd& lb,Eigen::VectorXd& ub, int &params_to_fit);
 
     void saveMetrics();
-//////
-    void purityModel_globalDP_CS();
-
-    double purity_model_globalDP_CS_circuit_measerr(double &d, double &alpha_1, double &alpha_2, double &beta);
-
-    double purity_model_globalDP_CS_circuit_measerr_part_eval(double &d, double &alpha_2, double &beta);
-
 
 };
 #endif

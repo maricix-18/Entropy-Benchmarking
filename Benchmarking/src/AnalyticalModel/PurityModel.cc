@@ -82,24 +82,59 @@ void PurityModel::purityModel_globalDP()
 
 };
 
-double PurityModel::purityModel_globalDP_localDP_value(double &depth) {
-    double alpha_1 = log(1/(1-p1_local));
-    double alpha_2 = log(1/(1-p2_local));
+double PurityModel::purityModel_globalDP_localDP_value(double &depth, double &p_1, double &p_2) {
+    double alpha_1 = log(1/(1-p_1));
+    double alpha_2 = log(1/(1-p_2));
 
     double pur =  (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* depth) - 1) + 1;
     return pur;
 }
 
+double PurityModel::purityModel_globalDP_localDP_R2d_model_part_eval(double &depth,double &p_1, double &p_2) {
+    double R2d = -1 * log2(purityModel_globalDP_localDP_value(depth,p_1, p_2)) / _qubits;
+    return R2d;
+}
+
 void PurityModel::purityModel_globalDP_localDP()
 {
-    //WHAT IS THIS
     cout << "purityModel_globalDP of local depolarising probabilities" << endl;
-    
-    for (double d = 0; d <= _max_depth; d++)
-    {
-        double pur = purityModel_globalDP_localDP_value(d);
+    cout << "purityModel_globalDP_localDP"<< endl;
+    // get short metrics for the experiment -- density matrix values
+    ifstream file("../../Data_test/DensityMatrices_metrics/Q3.json");
+    if (!file.is_open()) {
+        cerr << "Error: could not open file.\n";
+    }
+
+    json j;
+    file >> j;
+    map<string, vector<double>> all_R2d_results;
+    for (auto& [key, value] : j.items()) {
+        all_R2d_results[key] = value.get<vector<double>>();
+    }
+
+    depth_tab_populate();
+    depth_tab_more_points_populate();
+
+    // fit curve based on data
+    Eigen::VectorXd p0(2);
+    p0 << 0.5, 0.5; // initial guess
+
+    Eigen::VectorXd lb(2), ub(2);
+    lb << 0.0, 0.0; // lower bounds
+    ub << 1.0, 1.0; // upper bounds
+
+    int params_to_fit = 2;
+    string name = "purity_model_globalDP_localDP";
+    auto [popt, pcov] = curve_fit_eigen(name, depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
+
+    double alpha_1_optim_classim = popt[0];
+    double alpha_2_optim_classim = popt[1];
+
+    for (double d : depth_tab_more_points) {
+        double pur = purityModel_globalDP_localDP_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
+        double R2d = -1 * log2(pur)/ _qubits;
         all_pur.push_back(pur);
-        all_R2d.push_back(-1 * log2(pur) / _qubits);
+        all_R2d.push_back(R2d);
     }
 };
 
