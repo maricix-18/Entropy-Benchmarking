@@ -73,25 +73,25 @@ int main(int argc, char* argv[]) {
 
         cout << " Choose a purity model:" << endl;
         cout << " 1 Purity model based on global depolarising noise model." << endl;
-        cout << " 2 Purity model based on global depolarising noise model + Classical Shadows." << endl;
-        cout << " 3 Purity model based on global depolarising noise model function of local depolarising probabilities ." << endl;
+        cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
+        cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
         cout << " Input the number of the protocol you want to use: ";
         cin >> pur_model;
 
         if (pur_model == 1)
         {
-            cout << "Not implemented yet."<<endl;
-            // purity_model.purityModel_globalDP();
-
+            purity_model.purityModel_globalDP();
+            purity_model.saveMetrics();
         }
         else if (pur_model == 2)
         {
-            purity_model.purityModel_globalDP_CS();
+            purity_model.purityModel_globalDP_localDP();
             purity_model.saveMetrics();
         }
         else if (pur_model == 3)
         {
-            purity_model.purityModel_globalDP_localDP();
+
+            purity_model.purityModel_globalDP_CS();
             purity_model.saveMetrics();
         }
         else
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
         protocol_ptr->setQureg();
         protocol_ptr->buildCircuit(curr_depth);
         protocol_ptr->metrics();
-        protocol_ptr->saveMetrics();
+       // protocol_ptr->saveMetrics();
         protocol_ptr->destroy();
     }
    

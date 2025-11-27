@@ -8,19 +8,96 @@ void PurityModel::initialise(Backend &_backend, int &qubits, int &max_depth) {
     _qubits = qubits;
     _max_depth = max_depth;
 
-    p1 = backend->get_p1_local();
-    p2 = backend->get_p2_local();
+    p1_local = backend->get_p1_local();
+    p2_local = backend->get_p2_local();
 };
+
+void PurityModel::depth_tab_populate() {
+    // if empty populate depth tab - vector [0,1,2..d]
+    if (depth_tab.empty()) {
+        depth_tab.resize(_max_depth+1);
+        iota(depth_tab.begin(), depth_tab.end(), 0);
+    }
+}
+
+void PurityModel::depth_tab_more_points_populate() {
+    // if empty populate
+    if (depth_tab_more_points.empty()) {
+        depth_tab_more_points = linspace(0, _max_depth+1, 1000);
+    }
+}
+
+double PurityModel::purityModel_globalDP_value(double &depth, double &alpha_1, double &alpha_2) {
+    return (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* depth) - 1) + 1;
+}
+
+double PurityModel::purityModel_globalDP_R2d_model_part_eval(double &depth, double &alpha_2) {
+    double c = p1_local/p2_local;
+    double alpha_1 = alpha_2 * c;
+    double R2d = -1 * log2(purityModel_globalDP_value(depth, alpha_1, alpha_2)) / _qubits;
+    return R2d;
+}
+
+void PurityModel::purityModel_globalDP()
+{
+    cout << "purityModel_globalDP"<< endl;
+    // get short metrics for the experiment -- density matrix values
+    ifstream file("../../Data_test/DensityMatrices_metrics/Q3.json");
+    if (!file.is_open()) {
+        cerr << "Error: could not open file.\n";
+    }
+
+    json j;
+    file >> j;
+    map<string, vector<double>> all_R2d_results;
+    for (auto& [key, value] : j.items()) {
+        all_R2d_results[key] = value.get<vector<double>>();
+    }
+
+    double c = p1_local/p2_local;
+    depth_tab_populate();
+    depth_tab_more_points_populate();
+
+    // fit curve based on data
+    Eigen::VectorXd p0(2);
+    p0 << 0.5, 0.5; // initial guess
+
+    Eigen::VectorXd lb(2), ub(2);
+    lb << 0.0, 0.0; // lower bounds
+    ub << 1.0, 1.0; // upper bounds
+
+    int params_to_fit = 1;
+    string name = "purity_model_globalDP";
+    auto [popt, pcov] = curve_fit_eigen(name, depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
+
+    double alpha_1_optim_classim = popt[0] * c;
+    double alpha_2_optim_classim = popt[0];
+
+    for (double d : depth_tab_more_points) {
+        double pur = purityModel_globalDP_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
+        double R2d = -1 * log2(pur)/ _qubits;
+        all_pur.push_back(pur);
+        all_R2d.push_back(R2d);
+    }
+
+};
+
+double PurityModel::purityModel_globalDP_localDP_value(double &depth) {
+    double alpha_1 = log(1/(1-p1_local));
+    double alpha_2 = log(1/(1-p2_local));
+
+    double pur =  (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* depth) - 1) + 1;
+    return pur;
+}
 
 void PurityModel::purityModel_globalDP_localDP()
 {
-    //done
+    //WHAT IS THIS
     cout << "purityModel_globalDP of local depolarising probabilities" << endl;
-    double alpha_1 = log(1/(1-p1));
-    double alpha_2 = log(1/(1-p2));
-    for (int d = 0; d <= _max_depth; d++)
+    
+    for (double d = 0; d <= _max_depth; d++)
     {
-        double pur =  (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* d) - 1) + 1;
+        double pur = purityModel_globalDP_localDP_value(d);
         all_pur.push_back(pur);
         all_R2d.push_back(-1 * log2(pur) / _qubits);
     }
@@ -31,12 +108,56 @@ double PurityModel::purity_model_globalDP_CS_circuit_measerr(double &d, double &
     return (1 - pow(2,(-_qubits)))*(exp(-2*(alpha_1*_qubits*(2*d) + alpha_2*(_qubits-1)*d + beta*_qubits)) - 1) + 1;
 };
 
-double PurityModel::purity_model_globalDP_CS_circuit_measerr_part_eval(int &d, double &alpha_2, double &beta) {
+double PurityModel::purity_model_globalDP_CS_circuit_measerr_part_eval(double &d, double &alpha_2, double &beta) {
     // done
-    double c = p1/p2;
+    double c = p1_local/p2_local;
     double alpha_1 = alpha_2 * c;
-    double dd = static_cast<double>(d);
-    return purity_model_globalDP_CS_circuit_measerr( dd, alpha_1, alpha_2, beta);
+    return purity_model_globalDP_CS_circuit_measerr( d, alpha_1, alpha_2, beta);
+};
+
+
+void PurityModel::purityModel_globalDP_CS()
+{
+    cout << "purityModel_globalDP_CS" << endl;
+    double c = p1_local/p2_local;
+
+    depth_tab_populate();
+    depth_tab_more_points_populate();
+
+    // get short metrics for the experiment
+    ifstream file("../../Data_test/ClassicalShadows_metrics/Q3_m320_k1000_g5_s3.json");
+    if (!file.is_open()) {
+        cerr << "Error: could not open file.\n";
+    }
+
+    json j;
+    file >> j;
+    map<string, vector<double>> short_metrics_classim;
+    for (auto& [key, value] : j.items()) {
+        short_metrics_classim[key] = value.get<vector<double>>();
+    }
+
+    Eigen::VectorXd p0(2);
+    p0 << 0.5, 0.5; // initial guess
+
+    Eigen::VectorXd lb(2), ub(2);
+    lb << 0.0, 0.0;
+    ub << 1.0, 1.0;
+
+    int params_to_fit = 2;
+    string name = "purity_model_globalDP_CS";
+    auto [popt, pcov] = curve_fit_eigen(name, depth_tab, short_metrics_classim["all_pur_mean_diff_n"], p0,lb,ub, params_to_fit);
+
+    double alpha_1_optim_classim = popt[0] * c;
+    double alpha_2_optim_classim = popt[0];
+    double beta_optim_classim = popt[1];
+
+    for (double d : depth_tab_more_points) {
+        double pur = purity_model_globalDP_CS_circuit_measerr(d, alpha_1_optim_classim, alpha_2_optim_classim, beta_optim_classim);
+        all_pur.push_back(pur);
+        all_R2d.push_back(-1 * log2(pur) / _qubits);
+    }
+
 };
 
 vector<double> PurityModel::linspace(int start, int stop, int num) {
@@ -60,27 +181,21 @@ vector<double> PurityModel::linspace(int start, int stop, int num) {
     }
 
     if (num > 1) {
-        y.back() = stop; // ensure exact endpoint
+        y.back() = stop; // ensure endpoint
     }
 
     return y;
 };
 
-pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(
-    vector<int>& xdata,
-    vector<double>& ydata,
-    Eigen::VectorXd p0,
-    Eigen::VectorXd& lb,
-    Eigen::VectorXd& ub)
+pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(string &name, vector<double>& xdata,vector<double>& ydata,Eigen::VectorXd p0,Eigen::VectorXd& lb,Eigen::VectorXd& ub, int &params_to_fit)
 {
-    PurityFitFunctor functor(*this, xdata, ydata);
+    PurityFitFunctor functor(*this, name, xdata, ydata, params_to_fit);
     Eigen::NumericalDiff<PurityFitFunctor> numDiff(functor);
     Eigen::LevenbergMarquardt<Eigen::NumericalDiff<PurityFitFunctor>> lm(numDiff);
 
     lm.setXtol(1e-8);
     lm.setFtol(1e-8) ;
     lm.setMaxfev(2000) ;
-
 
     lm.minimize(p0);
 
@@ -92,7 +207,7 @@ pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(
     Eigen::MatrixXd J(ydata.size(), p0.size());
     numDiff.df(p0, J);
 
-    // Covariance estimation using pseudo-inverse for stability
+    // Covariance estimation
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(J.transpose() * J, Eigen::ComputeThinU | Eigen::ComputeThinV);
     double tol = 1e-12; // tolerance for small singular values
     Eigen::VectorXd singular_vals = svd.singularValues();
@@ -101,54 +216,6 @@ pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(
 
 
     return {p0, cov};
-};
-
-void PurityModel::purityModel_globalDP_CS()
-{
-    cout << "purityModel_globalDP_CS" << endl;
-    double c = p1/p2;
-
-    // 1. get short metrics for the experiment -
-    ifstream file("../../Data_test/ClassicalShadows_metrics/Q3_m320_k1000_g5_s3.json");
-    if (!file.is_open()) {
-        cerr << "Error: could not open file.\n";
-    }
-
-    json j;
-    file >> j;
-    map<string, vector<double>> short_metrics_classim;
-    for (auto& [key, value] : j.items()) {
-        short_metrics_classim[key] = value.get<vector<double>>();
-    }
-
-    // 2. depth tab - vector [0,1,2..d]
-    vector<int> depth_tab(_max_depth+1);
-    iota(depth_tab.begin(), depth_tab.end(), 0);
-
-    // 3. depth_tab_more_points np.linspace(depth_min, depth_max+1, 1000)
-    depth_tab_more_points = linspace(0, _max_depth+1, 1000);
-
-    // 4. fit curve based on data
-    // popt_classim, _ = curve_fit(purity_model_globalDP_CS_circuit_measerr_part_eval, depth tab, short_metrics_classim, bounds=(0,1))
-    Eigen::VectorXd p0(2);
-    p0 << 0.5, 0.5; // initial guess
-
-    Eigen::VectorXd lb(2), ub(2);
-    lb << 0.0, 0.0;
-    ub << 1.0, 1.0;
-
-    auto [popt, pcov] = curve_fit_eigen(depth_tab, short_metrics_classim["all_pur_mean_diff_n"], p0, lb, ub);
-
-    double alpha_1_optim_classim = popt[0] * c;
-    double alpha_2_optim_classim = popt[0];
-    double beta_optim_classim = popt[1];
-
-    for (double d : depth_tab_more_points) {
-        double pur = purity_model_globalDP_CS_circuit_measerr(d, alpha_1_optim_classim, alpha_2_optim_classim, beta_optim_classim);
-        all_pur.push_back(pur);
-        all_R2d.push_back(-1 * log2(pur) / _qubits);
-    }
-
 };
 
 void PurityModel::saveMetrics()
@@ -193,18 +260,5 @@ void PurityModel::saveMetrics()
         out << setw(4) << j << endl;
 };
 
-// TODO
-void PurityModel::purityModel_globalDP()
-{
-    // ?? What is this one?
-    cout << "purityModel_globalDP"<< endl;
-    // double alpha_1 = log(1/(1-p1));
-    // double alpha_2 = log(1/(1-p2));
-    // for (int d = 0; d <= _max_depth; d++)
-    // {
-    //     double pur =  (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* d) - 1) + 1;
-    //     all_pur.push_back(pur);
-    // }
-};
 
 

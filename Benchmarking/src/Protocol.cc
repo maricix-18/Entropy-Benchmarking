@@ -29,16 +29,18 @@ void Protocol::setQureg()
     cout << "Create Q Environment\n";
     if (isQuESTEnvInit() == 0)
         initQuESTEnv();
-
-    if (this_prot == "Swap")
-    {
-        cout << "Create Swap Register\n";
-        ds_qreg = createDensityQureg(2*_qubits);
-    }
-    else{
-        cout << "Create Q Register\n";
-        ds_qreg = createDensityQureg(_qubits);
-    }
+    ds_qreg = createQureg(_qubits);
+    applyHadamard(ds_qreg,0);
+    // if (this_prot == "Swap")
+    // {
+    //     cout << "Create Swap Register\n";
+    //     ds_qreg = createDensityQureg(2*_qubits);
+    //
+    // }
+    // else{
+    //     cout << "Create Q Register\n";
+    //     ds_qreg = createDensityQureg(_qubits);
+    // }
 }
 
 void Protocol::buildCircuit(int &curr_depth)

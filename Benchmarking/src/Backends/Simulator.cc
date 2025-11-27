@@ -61,3 +61,11 @@ double Simulator::get_p1_local() {
 double Simulator::get_p2_local() {
     return p2_local;
 };
+
+double Simulator::get_p1_global() {
+    return p1_global;
+};
+
+double Simulator::get_p2_global() {
+    return p2_global;
+};

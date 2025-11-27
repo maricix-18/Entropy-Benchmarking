@@ -13,7 +13,8 @@ class Simulator : public Backend
     double p2_local = 0.054;
     double p1 = (3*p1_local)/4.0; // depolarising noise 1 qubit gate
     double p2 = (15*p2_local)/16.0; // depolarising noise 2 qubits gate
-
+    double p1_global = 0.08;
+    double p2_global = 0.08;
  public:
     
     void some_backendfunc() override;
@@ -25,6 +26,10 @@ class Simulator : public Backend
     double get_p1_local() override;
 
     double get_p2_local() override;
+
+    double get_p1_global() override;
+
+    double get_p2_global() override;
 };
 
 #endif
