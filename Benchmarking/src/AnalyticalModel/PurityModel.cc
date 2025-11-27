@@ -90,7 +90,9 @@ double PurityModel::purityModel_globalDP_localDP_value(double &depth, double &p_
     return pur;
 }
 
-double PurityModel::purityModel_globalDP_localDP_R2d_model_part_eval(double &depth,double &p_1, double &p_2) {
+double PurityModel::purityModel_globalDP_localDP_R2d_model_part_eval(double &depth, double &p_2) {
+    double c = p1_local/p2_local;
+    double p_1 = p_2 * c;
     double R2d = -1 * log2(purityModel_globalDP_localDP_value(depth,p_1, p_2)) / _qubits;
     return R2d;
 }
@@ -114,7 +116,7 @@ void PurityModel::purityModel_globalDP_localDP()
 
     depth_tab_populate();
     depth_tab_more_points_populate();
-
+    double c = p1_local/p2_local;
     // fit curve based on data
     Eigen::VectorXd p0(2);
     p0 << 0.5, 0.5; // initial guess
@@ -123,12 +125,12 @@ void PurityModel::purityModel_globalDP_localDP()
     lb << 0.0, 0.0; // lower bounds
     ub << 1.0, 1.0; // upper bounds
 
-    int params_to_fit = 2;
+    int params_to_fit = 1;
     string name = "purity_model_globalDP_localDP";
     auto [popt, pcov] = curve_fit_eigen(name, depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
 
-    double alpha_1_optim_classim = popt[0];
-    double alpha_2_optim_classim = popt[1];
+    double alpha_1_optim_classim = popt[0] * c;
+    double alpha_2_optim_classim = popt[0];
 
     for (double d : depth_tab_more_points) {
         double pur = purityModel_globalDP_localDP_value(d, alpha_1_optim_classim, alpha_2_optim_classim);

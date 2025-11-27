@@ -39,7 +39,7 @@ public:
 
     double purityModel_globalDP_localDP_value(double &depth, double &alpha_1, double &alpha_2);
 
-    double purityModel_globalDP_localDP_R2d_model_part_eval(double &depth, double &p_1, double &p_2);
+    double purityModel_globalDP_localDP_R2d_model_part_eval(double &depth, double &p_2);
 
     void purityModel_globalDP_CS();
 
@@ -69,7 +69,7 @@ public:
         {
             if (model_name == "purity_model_globalDP") {
                 double alpha_2 = params[0];
-                for (int i = 0; i < values(); ++i) {
+                for (int i = 0; i < values(); i++) {
                     double model_val = model.purityModel_globalDP_R2d_model_part_eval(xdata[i], alpha_2);
                     residuals[i] = ydata[i] - model_val;
                 }
@@ -77,20 +77,18 @@ public:
             else if (model_name == "purity_model_globalDP_CS") {
                 double alpha_2 = params[0];
                 double beta = params[1];
-                for (int i = 0; i < values(); ++i) {
+                for (int i = 0; i < values(); i++) {
                     double model_val = model.purity_model_globalDP_CS_circuit_measerr_part_eval(xdata[i], alpha_2, beta);
                     residuals[i] = ydata[i] - model_val;
                 }
             }
-            else if (model_name == "purity_model_localDP") {
-                double p_1 = params[0];
-                double p_2 = params[1];
-                for (int i = 0; i < values(); ++i) {
-                    double model_val = model.purityModel_globalDP_localDP_R2d_model_part_eval(xdata[i], p_1, p_2);
+            else if (model_name == "purity_model_globalDP_localDP") {
+                double alpha_2 = params[0];
+                for (int i = 0; i < values(); i++) {
+                    double model_val = model.purityModel_globalDP_localDP_R2d_model_part_eval(xdata[i], alpha_2);
                     residuals[i] = ydata[i] - model_val;
                 }
             }
-
              return 0;
         }
     };
