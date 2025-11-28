@@ -266,7 +266,12 @@ pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(vector<doubl
 
 string PurityModel::find_file_CS() {
 
-    string directory = "../../Data_test/ClassicalShadows_metrics/"; // Directory to search in
+    string directory;
+#ifdef _WIN32
+    directory = "../../Data_test/ClassicalShadows_metrics/";
+#else
+    directory = = "../Data_test/ClassicalShadows_metrics/";
+#endif
 
     // Iterate over the files in the directory
     for (const auto& entry : filesystem::directory_iterator(directory)) {
@@ -276,6 +281,7 @@ string PurityModel::find_file_CS() {
         if (filename.substr(0, 1) == "Q" && filename.substr(1, std::to_string(_qubits).size()) == std::to_string(_qubits) &&
             filename.substr(filename.size() - 5) == ".json")
         {
+            filename= directory+filename;
             return filename;
         }
     }
@@ -283,7 +289,13 @@ string PurityModel::find_file_CS() {
 };
 
 string PurityModel::find_file_DM() {
-    string file_path = "../../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
+    string file_path;
+#ifdef _WIN32
+    file_path = "../../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
+#else
+    file_path = = "../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
+#endif
+
     return file_path;
 }
 
