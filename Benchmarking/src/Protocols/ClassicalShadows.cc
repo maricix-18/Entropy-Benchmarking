@@ -262,12 +262,22 @@ void ClassicalShadows::saveMetrics()
 {
     cout << "Saving Classical shadows metrics to file." << endl;
     json j;
-    string filename = "../../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) +
-                                                                "_m" + to_string((int)num_measurements) +
-                                                                "_k"+ to_string(shots) +
-                                                                "_g"+ to_string(groups) +
-                                                                "_s"+ to_string(samples) +
-                                                                    ".json";
+    string filename;
+
+#ifdef _WIN32
+filename = "../../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) +
+                                                  "_m" + to_string((int)num_measurements) +
+                                                  "_k" + to_string(shots) +
+                                                  "_g" + to_string(groups) +
+                                                  "_s" + to_string(samples) + ".json";
+#else
+ filename = "../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) +
+                                                "_m" + to_string((int)num_measurements) +
+                                                "_k" + to_string(shots) +
+                                                "_g" + to_string(groups) +
+                                                "_s" + to_string(samples) + ".json";
+#endif
+
     // check file or create
     struct stat buffer;
     if (stat(filename.c_str(), &buffer) == 0) {
@@ -298,5 +308,10 @@ void ClassicalShadows::saveMetrics()
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
+
+    all_purity_mean.clear();
+    all_R2d_mean.clear();
+    all_purity_std.clear();
+    all_R2d_std.clear();
 
 };

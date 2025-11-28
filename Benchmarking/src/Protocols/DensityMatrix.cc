@@ -52,6 +52,7 @@ void DensityMatrix::saveMetrics()
     cout << "Saving DensityMatrix metrics to file." << endl;
     json j;
     string filename;
+
     #ifdef _WIN32
         filename = "../../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) + ".json";;
     #else
@@ -86,4 +87,9 @@ void DensityMatrix::saveMetrics()
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
+
+    all_purity.clear();
+    all_R2d.clear();
+    all_VnD.clear();
+
 };

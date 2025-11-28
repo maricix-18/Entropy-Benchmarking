@@ -23,7 +23,7 @@ void PurityModel::depth_tab_populate() {
 void PurityModel::depth_tab_more_points_populate() {
     // if empty populate
     if (depth_tab_more_points.empty()) {
-        depth_tab_more_points = linspace(0, _max_depth+1, 1000);
+        depth_tab_more_points = linspace(0, _max_depth, 1000);
     }
 }
 
@@ -42,7 +42,9 @@ void PurityModel::purityModel_globalDP()
 {
     cout << "purityModel_globalDP"<< endl;
     // get short metrics for the experiment -- density matrix values
-    ifstream file("../../Data_test/DensityMatrices_metrics/Q3.json");
+    string file_path = find_file_DM();
+    ifstream file(file_path);
+
     if (!file.is_open()) {
         cerr << "Error: could not open file.\n";
     }
@@ -67,12 +69,13 @@ void PurityModel::purityModel_globalDP()
     ub << 1.0, 1.0; // upper bounds
 
     int params_to_fit = 1;
-    string name = "purity_model_globalDP";
-    auto [popt, pcov] = curve_fit_eigen(name, depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
+    name_model = "purity_model_globalDP";
+    auto [popt, pcov] = curve_fit_eigen(depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
 
     double alpha_1_optim_classim = popt[0] * c;
     double alpha_2_optim_classim = popt[0];
-
+    fitted_params.push_back(make_pair("alpha_1_optim_classim", alpha_1_optim_classim));
+    fitted_params.push_back(make_pair("alpha_2_optim_classim", alpha_2_optim_classim));
     for (double d : depth_tab_more_points) {
         double pur = purityModel_globalDP_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
         double R2d = -1 * log2(pur)/ _qubits;
@@ -99,10 +102,10 @@ double PurityModel::purityModel_globalDP_localDP_R2d_model_part_eval(double &dep
 
 void PurityModel::purityModel_globalDP_localDP()
 {
-    cout << "purityModel_globalDP of local depolarising probabilities" << endl;
     cout << "purityModel_globalDP_localDP"<< endl;
     // get short metrics for the experiment -- density matrix values
-    ifstream file("../../Data_test/DensityMatrices_metrics/Q3.json");
+    string file_path = find_file_DM();
+    ifstream file(file_path);
     if (!file.is_open()) {
         cerr << "Error: could not open file.\n";
     }
@@ -126,11 +129,13 @@ void PurityModel::purityModel_globalDP_localDP()
     ub << 1.0, 1.0; // upper bounds
 
     int params_to_fit = 1;
-    string name = "purity_model_globalDP_localDP";
-    auto [popt, pcov] = curve_fit_eigen(name, depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
+    name_model = "purity_model_globalDP_localDP";
+    auto [popt, pcov] = curve_fit_eigen(depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
 
     double alpha_1_optim_classim = popt[0] * c;
     double alpha_2_optim_classim = popt[0];
+    fitted_params.push_back(make_pair("alpha_1_optim_classim", alpha_1_optim_classim));
+    fitted_params.push_back(make_pair("alpha_2_optim_classim", alpha_2_optim_classim));
 
     for (double d : depth_tab_more_points) {
         double pur = purityModel_globalDP_localDP_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
@@ -162,7 +167,8 @@ void PurityModel::purityModel_globalDP_CS()
     depth_tab_more_points_populate();
 
     // get short metrics for the experiment
-    ifstream file("../../Data_test/ClassicalShadows_metrics/Q3_m320_k1000_g5_s3.json");
+    string file_path = find_file_CS();
+    ifstream file(file_path);
     if (!file.is_open()) {
         cerr << "Error: could not open file.\n";
     }
@@ -182,12 +188,15 @@ void PurityModel::purityModel_globalDP_CS()
     ub << 1.0, 1.0;
 
     int params_to_fit = 2;
-    string name = "purity_model_globalDP_CS";
-    auto [popt, pcov] = curve_fit_eigen(name, depth_tab, short_metrics_classim["all_pur_mean_diff_n"], p0,lb,ub, params_to_fit);
+    name_model = "purity_model_globalDP_CS";
+    auto [popt, pcov] = curve_fit_eigen(depth_tab, short_metrics_classim["all_pur_mean_diff_n"], p0,lb,ub, params_to_fit);
 
     double alpha_1_optim_classim = popt[0] * c;
     double alpha_2_optim_classim = popt[0];
     double beta_optim_classim = popt[1];
+    fitted_params.push_back(make_pair("alpha_1_optim_classim", alpha_1_optim_classim));
+    fitted_params.push_back(make_pair("alpha_2_optim_classim", alpha_2_optim_classim));
+    fitted_params.push_back(make_pair("beta_optim_classim", beta_optim_classim));
 
     for (double d : depth_tab_more_points) {
         double pur = purity_model_globalDP_CS_circuit_measerr(d, alpha_1_optim_classim, alpha_2_optim_classim, beta_optim_classim);
@@ -224,9 +233,9 @@ vector<double> PurityModel::linspace(int start, int stop, int num) {
     return y;
 };
 
-pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(string &name, vector<double>& xdata,vector<double>& ydata,Eigen::VectorXd p0,Eigen::VectorXd& lb,Eigen::VectorXd& ub, int &params_to_fit)
+pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(vector<double>& xdata,vector<double>& ydata,Eigen::VectorXd p0,Eigen::VectorXd& lb,Eigen::VectorXd& ub, int &params_to_fit)
 {
-    PurityFitFunctor functor(*this, name, xdata, ydata, params_to_fit);
+    PurityFitFunctor functor(*this, xdata, ydata, params_to_fit);
     Eigen::NumericalDiff<PurityFitFunctor> numDiff(functor);
     Eigen::LevenbergMarquardt<Eigen::NumericalDiff<PurityFitFunctor>> lm(numDiff);
 
@@ -255,15 +264,39 @@ pair<Eigen::VectorXd, Eigen::MatrixXd> PurityModel::curve_fit_eigen(string &name
     return {p0, cov};
 };
 
+string PurityModel::find_file_CS() {
+
+    string directory = "../../Data_test/ClassicalShadows_metrics/"; // Directory to search in
+
+    // Iterate over the files in the directory
+    for (const auto& entry : filesystem::directory_iterator(directory)) {
+        string filename = entry.path().filename().string();
+
+        // Check if the filename starts with 'Q' followed by the _qubits number and ends with '.json'
+        if (filename.substr(0, 1) == "Q" && filename.substr(1, std::to_string(_qubits).size()) == std::to_string(_qubits) &&
+            filename.substr(filename.size() - 5) == ".json")
+        {
+            return filename;
+        }
+    }
+    return "No matching file found.";
+};
+
+string PurityModel::find_file_DM() {
+    string file_path = "../../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
+    return file_path;
+}
+
 void PurityModel::saveMetrics()
 {
     cout << "Saving Analytical model metrics to file." << endl;
     json j;
     string filename;
+
 #ifdef _WIN32
-    filename = "../../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + ".json";;
+    filename = "../../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";;
 #else
-    filename = "../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + ".json";;
+    filename = "../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";;
 #endif
 
     // check file or create
@@ -281,7 +314,11 @@ void PurityModel::saveMetrics()
             cout << "File created.\n";
         }
     }
-
+    for (auto pair: fitted_params) {
+        string key = pair.first;
+        double value = pair.second;
+        j[key].push_back(value);
+    }
     for (double pur : all_pur) {
         j["all_pur_diff_n"].push_back(pur);
     }
@@ -295,6 +332,13 @@ void PurityModel::saveMetrics()
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
+
+    all_pur.clear();
+    all_R2d.clear();
+    depth_tab_more_points.clear();
+    depth_tab.clear();
+    fitted_params.clear();
+
 };
 
 

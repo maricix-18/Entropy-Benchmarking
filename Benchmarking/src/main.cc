@@ -65,8 +65,10 @@ int main(int argc, char* argv[]) {
     }
     else if (protocol == 4)
     {
+
         cout << "Purity Model." << endl;
         PurityModel purity_model;
+
         purity_model.initialise(*backend_ptr, qubits, max_depth);
 
         int pur_model;
@@ -116,7 +118,7 @@ int main(int argc, char* argv[]) {
         protocol_ptr->setQureg();
         protocol_ptr->buildCircuit(curr_depth);
         protocol_ptr->metrics();
-       // protocol_ptr->saveMetrics();
+        protocol_ptr->saveMetrics();
         protocol_ptr->destroy();
     }
    
