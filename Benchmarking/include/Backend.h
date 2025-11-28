@@ -23,9 +23,6 @@ class Backend
 
     virtual double get_p2_local();
 
-    virtual double get_p1_global();
-
-    virtual double get_p2_global();
 };
 
 #endif

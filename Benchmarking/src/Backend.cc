@@ -21,11 +21,3 @@ double Backend::get_p1_local() {
 double Backend::get_p2_local() {
     return 0;
 };
-
-double Backend::get_p1_global() {
-    return 0;
-};
-
-double Backend::get_p2_global() {
-    return 0;
-};

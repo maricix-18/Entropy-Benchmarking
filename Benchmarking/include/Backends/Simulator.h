@@ -26,10 +26,6 @@ class Simulator : public Backend
     double get_p1_local() override;
 
     double get_p2_local() override;
-
-    double get_p1_global() override;
-
-    double get_p2_global() override;
 };
 
 #endif
