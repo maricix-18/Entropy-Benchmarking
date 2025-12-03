@@ -2,6 +2,21 @@
 #define CS_H
 
 #include "Protocol.h"
+#include <map>
+/*
+ * metrics for Q3
+ * `M 320
+ * `k 1000
+ * `g 5
+ * `s 3
+ *
+ * metrics for Q5
+ * `M 3072
+ * `k 100
+ * `g 3
+ * `s 3
+ */
+
 
 typedef complex<double> Complex_value;
 typedef Eigen::MatrixXcd Eigen_matrix;
@@ -27,17 +42,23 @@ protected:
     vector<int> key;
     map<string, int> counts; // map for unique bitstring gathering
     vector<double> means;
-    double num_measurements = 3072; // M
-    int shots = 100; // k
-    int groups = 3;
+    double num_measurements = 320; // M
+    int shots = 1000; // k
+    int groups = 5;
     int samples = 3; // samples
     double K_factor = 1.0 / (shots * shots);
 
     // Needs to be an equal number of measurements per group
     int M_subgroup = static_cast<int>(ceil(double(num_measurements / groups)));
     double M_factor = 2.0 / (M_subgroup * (M_subgroup - 1));
-  
+
+    //for testing
+    vector<vector<int>> list_meas_;
+    vector<double> list_r;
  public:
+
+    //auto get_gen();
+    random_device rd;
     void somefunc() override;
    
     void metrics() override;

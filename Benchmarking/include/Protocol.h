@@ -31,6 +31,10 @@ class Protocol
     vector<double> angles_array;
 
  public:
+   // set seed
+   mt19937 gen;
+
+   mt19937 set_gen();
 
    virtual void somefunc();
 

@@ -22,10 +22,6 @@ void Swap::metrics()
     {
         cout << "Apply Swap Protocol for sample " << n << endl;
         vector<double> pur_means;
-       // Random number generator setup - sampling
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_real_distribution<> dis(0.0, 1.0);
 
         for (int i = 0; i < groups; i++)
         {
@@ -48,7 +44,7 @@ void Swap::metrics()
 
             // Count measurement outcomes
             for (size_t shot = 0; shot < shots; shot++) {
-                double r = dis(gen);
+                double r = genrand_res53();
                 int outcome = binarySearchCDF(cdf, r);
                 // Convert outcome to bitstring with leading zeros
                 string bitstring;
@@ -193,12 +189,12 @@ void Swap::saveMetrics()
     string filename ;
 
 #ifdef _WIN32
-    filename = "../../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) +
+    filename = "../../Data_test/Swap_metrics/Q" + to_string(_qubits) +
                                                       "_m" + to_string(num_measurements) +
                                                       "_g" + to_string(groups) +
                                                       "_s" + to_string(samples) + ".json";
 #else
-    filename = "../Data_test/DensityMatrices_metrics/Q" + to_string(_qubits) +
+    filename = "../Data_test/Swap_metrics/Q" + to_string(_qubits) +
                                                    "_m" + to_string((int)num_measurements) +
                                                    "_g" + to_string(groups) +
                                                    "_s" + to_string(samples) + ".json";
@@ -237,9 +233,5 @@ void Swap::saveMetrics()
     if (out.is_open())
         out << setw(4) << j << endl;
 
-    all_purity_mean.clear();
-    all_R2d_mean.clear();
-    all_purity_std.clear();
-    all_R2d_std.clear();
 };
 

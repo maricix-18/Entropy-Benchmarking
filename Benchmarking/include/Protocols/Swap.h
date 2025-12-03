@@ -2,7 +2,17 @@
 #define SWAP_H
 
 #include "Protocol.h"
-
+/*
+ * metrics for Q3
+ * `M 3000
+ * `g 3
+ * `s 3
+ *
+ * metrics for Q5
+ * `M 307200
+ * `g 3
+ * `s 3
+ */
 typedef complex<double> Complex_value;
 typedef Eigen::MatrixXcd Eigen_matrix;
 

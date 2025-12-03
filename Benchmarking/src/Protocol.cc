@@ -9,8 +9,17 @@ void Protocol::initialise(Backend &_backend, int &qubits, int &max_depth)
     _qubits = qubits;
     _max_depth = max_depth;
 
+    //init random seed
+    gen = set_gen();
+
     // init angles
     angles_generator();
+};
+
+mt19937 Protocol::set_gen() {
+    init_genrand(837); // Equivalent to np.random.seed(837)
+    mt19937 gen(837); // for CS
+    return gen;
 };
 
 void Protocol::setBackend(Backend &_backend) {
@@ -44,6 +53,7 @@ void Protocol::setQureg()
 
 void Protocol::buildCircuit(int &curr_depth)
 {
+
     // build circuit for current depth
     _depth = curr_depth;
 
@@ -66,10 +76,12 @@ void Protocol::buildCircuit(int &curr_depth)
         }
         else
         {
+           // cout << "Building circuit for depth: " << _depth << endl;
             int fn_qubit = _qubits;
 
             for (int d = 1; d <= _depth; d++)
             {
+               //cout << "Apply layer for depth: " << _depth << endl;
                 backend->applyLayer(ds_qreg, st_qubit, fn_qubit, angles_array, d);
             }
         }
@@ -91,8 +103,6 @@ void Protocol::saveMetrics()
 void Protocol::angles_generator()
 {
     // generate all the angle for up to max depth
-    // set seed
-    init_genrand(837); // Equivalent to np.random.seed(837)
 
     int angles_per_layer = 2*_qubits;
     int total_angles = angles_per_layer*_max_depth;

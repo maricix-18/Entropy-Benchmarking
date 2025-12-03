@@ -88,8 +88,4 @@ void DensityMatrix::saveMetrics()
     if (out.is_open())
         out << setw(4) << j << endl;
 
-    all_purity.clear();
-    all_R2d.clear();
-    all_VnD.clear();
-
 };
