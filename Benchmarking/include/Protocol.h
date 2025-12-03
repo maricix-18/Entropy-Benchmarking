@@ -32,6 +32,7 @@ class Protocol
 
  public:
    // set seed
+   // // TODO two engines currently - fix to using only one
    mt19937 gen;
 
    mt19937 set_gen();

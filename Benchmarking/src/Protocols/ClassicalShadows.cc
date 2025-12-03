@@ -14,56 +14,56 @@ void  ClassicalShadows::metrics()
         cout << "Gather Shadows for sample: " << n <<endl;
         gatherShadows();
 
-        // cout << "Apply Classical Shadows Protocol\n";
-        //
-        // classicalShadows_protocol();
-        //
-        // double mom = median(means);// purity val
-        //
-        // double R2d = (-1 * log2(mom)) / _qubits; // R2d val
-        //
-        // cout << "Classical Shadows Protocol completed.\n";
-        //
-        // // gether list of samples
-        // pur_samples.push_back(mom);
-        // R2d_samples.push_back(R2d);
-        //
-        // // clear
-        // shadow_map.clear();
-        // means.clear();
+        cout << "Apply Classical Shadows Protocol\n";
+
+        classicalShadows_protocol();
+
+        double mom = median(means);// purity val
+
+        double R2d = (-1 * log2(mom)) / _qubits; // R2d val
+
+        cout << "Classical Shadows Protocol completed.\n";
+
+        // gether list of samples
+        pur_samples.push_back(mom);
+        R2d_samples.push_back(R2d);
+
+        // clear
+        shadow_map.clear();
+        means.clear();
 
     }// samples end
 
-    // Compute metrics
-    // mean purity
-    // double sum = accumulate(pur_samples.begin(), pur_samples.end(), 0.0);
-    // double pur_mean = sum / pur_samples.size();
-    // all_purity_mean.push_back(pur_mean);
-    //
-    // // Std for purity
-    // double variance = 0.0;
-    // for (double x : pur_samples) {
-    //     variance += pow(abs(x - pur_mean), 2);
-    // }
-    // double pur_std = sqrt(variance / pur_samples.size());
-    // all_purity_std.push_back(pur_std);
-    //
-    // // mean r2d
-    // sum = accumulate(R2d_samples.begin(), R2d_samples.end(), 0.0);
-    // double R2d_mean = sum / R2d_samples.size();
-    // all_R2d_mean.push_back(R2d_mean);
-    //
-    // //std for r2d
-    // variance = 0.0;
-    // for (double x : R2d_samples) {
-    //     variance += pow(abs(x - R2d_mean),2);
-    // }
-    // double R2d_std = sqrt(variance / R2d_samples.size());
-    // all_R2d_std.push_back(R2d_std);
-    //
-    // // clean up
-    // pur_samples.clear();
-    // R2d_samples.clear();
+    //Compute metrics
+   // mean purity
+    double sum = accumulate(pur_samples.begin(), pur_samples.end(), 0.0);
+    double pur_mean = sum / pur_samples.size();
+    all_purity_mean.push_back(pur_mean);
+
+    // Std for purity
+    double variance = 0.0;
+    for (double x : pur_samples) {
+        variance += pow(abs(x - pur_mean), 2);
+    }
+    double pur_std = sqrt(variance / pur_samples.size());
+    all_purity_std.push_back(pur_std);
+
+    // mean r2d
+    sum = accumulate(R2d_samples.begin(), R2d_samples.end(), 0.0);
+    double R2d_mean = sum / R2d_samples.size();
+    all_R2d_mean.push_back(R2d_mean);
+
+    //std for r2d
+    variance = 0.0;
+    for (double x : R2d_samples) {
+        variance += pow(abs(x - R2d_mean),2);
+    }
+    double R2d_std = sqrt(variance / R2d_samples.size());
+    all_R2d_std.push_back(R2d_std);
+
+    // clean up
+    pur_samples.clear();
+    R2d_samples.clear();
 };
 
 void ClassicalShadows::classicalShadows_protocol() {
@@ -164,56 +164,48 @@ int ClassicalShadows::binarySearchCDF(vector<double>& cdf, double value) {
 
 void ClassicalShadows::gatherShadows() {
 
-
-    //std::random_device rd;
-    std::mt19937 gen(rd());
-    uniform_real_distribution<> dis(0.0, 1.0);
-
     for (int j = 0; j < num_measurements; j++)
     {
         // generate and get measurement setting
         key = generate_measurement_setting();
-        list_meas_.push_back(key);
 
-        // // Sampling
-        // Qureg clone;
-        // clone = createCloneQureg(ds_qreg);
-        // backend->measurementLayer(clone, _qubits, key);
-        // size_t dim = 1ULL << _qubits;  // 2^numQubits
-        //
-        // // Prepare probability vector and CDF
-        // vector<double> probabilities(dim);
-        // vector<double> cdf(dim);
-        //
-        // // Fill probability vector
-        // for (size_t i = 0; i < dim; i++) {
-        //     probabilities[i] = calcProbOfBasisState(clone, i);
-        // }
-        //
-        // // Compute cumulative distribution function (CDF)
-        // cdf[0] = probabilities[0];
-        // for (size_t i = 1; i < dim; i++) {
-        //     cdf[i] = cdf[i - 1] + probabilities[i];
-        // }
+        // Sampling
+        Qureg clone;
+        clone = createCloneQureg(ds_qreg);
+        backend->measurementLayer(clone, _qubits, key);
+        size_t dim = 1ULL << _qubits;  // 2^numQubits
+
+        // Prepare probability vector and CDF
+        vector<double> probabilities(dim);
+        vector<double> cdf(dim);
+
+        // Fill probability vector
+        for (size_t i = 0; i < dim; i++) {
+            probabilities[i] = calcProbOfBasisState(clone, i);
+        }
+
+        // Compute cumulative distribution function (CDF)
+        cdf[0] = probabilities[0];
+        for (size_t i = 1; i < dim; i++) {
+            cdf[i] = cdf[i - 1] + probabilities[i];
+        }
 
         // Count measurement outcomes
         for (size_t shot = 0; shot < shots; shot++) {
-            //double r = genrand_res53();
-            double r = dis(gen);
-            list_r.push_back(r);
-            // int outcome = binarySearchCDF(cdf, r);
-            // // Convert outcome to bitstring with leading zeros
-            // string bitstring;
-            // for (int i = 0; i < _qubits; i++) {
-            //     bitstring += ((outcome >> i) & 1) ? '1' : '0';
-            // }
-            // counts[bitstring]++;
+            double r = genrand_res53();
+            int outcome = binarySearchCDF(cdf, r);
+            // Convert outcome to bitstring with leading zeros
+            string bitstring;
+            for (int i = 0; i < _qubits; i++) {
+                bitstring += ((outcome >> i) & 1) ? '1' : '0';
+            }
+            counts[bitstring]++;
         }
 
-        // destroyQureg(clone);
-        // shadow_map.push_back(make_pair(key, counts));
-        // counts.clear();
-        // key.clear();
+        destroyQureg(clone);
+        shadow_map.push_back(make_pair(key, counts));
+        counts.clear();
+        key.clear();
     }
 };
 
@@ -233,11 +225,9 @@ void ClassicalShadows::beta_vals_paulibasis()
 vector<int> ClassicalShadows::generate_measurement_setting()
 {
     vector<int> measurement_setting;
-
-    uniform_int_distribution<> dis(0, 2);
-    mt19937 gen(rd());
+    uniform_int_distribution dist(0,2);
     for (int i = 0; i < _qubits; i++) {
-        int basis = dis(gen);
+        int basis = genrand_res53();
         measurement_setting.push_back(basis);
     }
 
@@ -269,7 +259,7 @@ filename = "../../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) +
                                                   "_m" + to_string((int)num_measurements) +
                                                   "_k" + to_string(shots) +
                                                   "_g" + to_string(groups) +
-                                                  "_s" + to_string(samples) + "test.json";
+                                                  "_s" + to_string(samples) + ".json";
 #else
  filename = "../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) +
                                                 "_m" + to_string((int)num_measurements) +
@@ -292,29 +282,18 @@ filename = "../../Data_test/ClassicalShadows_metrics/Q" + to_string(_qubits) +
         }
     }
 
-    // for (double pur_mean : all_purity_mean) {
-    //      j["all_pur_mean_diff_n"].push_back(pur_mean);
-    // }
-    // for (double R2d_mean : all_R2d_mean) {
-    //     j["all_R2d_mean_diff_n"].push_back(R2d_mean);
-    // }
-    // for (double pur_std : all_purity_std) {
-    //    j["all_pur_std_diff_n"].push_back(pur_std);
-    // }
-    // for (double R2d_std : all_R2d_std) {
-    //     j["all_R2d_std_diff_n"].push_back(R2d_std);
-    // }
-
-    for (auto val : list_meas_) {
-        int base = 0;
-        int i = 100;
-        for (int v:val)
-        {base += i*v; i/=10; }
-        j["list_meas_"].push_back(base);
+    for (double pur_mean : all_purity_mean) {
+         j["all_pur_mean_diff_n"].push_back(pur_mean);
     }
-
-    for (auto val : list_r)
-        j["list_r_"].push_back(val);
+    for (double R2d_mean : all_R2d_mean) {
+        j["all_R2d_mean_diff_n"].push_back(R2d_mean);
+    }
+    for (double pur_std : all_purity_std) {
+       j["all_pur_std_diff_n"].push_back(pur_std);
+    }
+    for (double R2d_std : all_R2d_std) {
+        j["all_R2d_std_diff_n"].push_back(R2d_std);
+    }
 
     ofstream out(filename);
     if (out.is_open())

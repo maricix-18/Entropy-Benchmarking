@@ -52,13 +52,8 @@ protected:
     int M_subgroup = static_cast<int>(ceil(double(num_measurements / groups)));
     double M_factor = 2.0 / (M_subgroup * (M_subgroup - 1));
 
-    //for testing
-    vector<vector<int>> list_meas_;
-    vector<double> list_r;
  public:
 
-    //auto get_gen();
-    random_device rd;
     void somefunc() override;
    
     void metrics() override;
