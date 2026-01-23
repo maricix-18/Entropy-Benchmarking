@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
         cout << " 1 Purity model based on global depolarising noise model." << endl;
         cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
         cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
+        cout << " 4 Purity model based on global depolarising noise model + alpha_1 = p1, alpha_2 = p2" << endl;
         cout << " Input the number of the protocol you want to use: ";
         cin >> pur_model;
 
@@ -94,6 +95,12 @@ int main(int argc, char* argv[]) {
         {
 
             purity_model.purityModel_globalDP_CS();
+            purity_model.saveMetrics();
+        }
+        else if (pur_model == 4)
+        {
+
+            purity_model.purityModel_globalDP_p1_p2();
             purity_model.saveMetrics();
         }
         else
