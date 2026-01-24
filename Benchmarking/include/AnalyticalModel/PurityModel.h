@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <sys/stat.h>
 #include <unsupported/Eigen/LevenbergMarquardt>
 #include <unsupported/Eigen/AutoDiff>
 #include "nlohmann/json.hpp"

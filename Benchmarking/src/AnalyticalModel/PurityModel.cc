@@ -329,7 +329,7 @@ string PurityModel::find_file_CS() {
 #ifdef _WIN32
     directory = "../../Data_test/ClassicalShadows_metrics/";
 #else
-    directory = = "../Data_test/ClassicalShadows_metrics/";
+    directory = "../Data_test/ClassicalShadows_metrics/";
 #endif
 
     // Iterate over the files in the directory
@@ -352,7 +352,7 @@ string PurityModel::find_file_DM() {
 #ifdef _WIN32
     file_path = "../../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
 #else
-    file_path = = "../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
+    file_path = "../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
 #endif
 
     return file_path;
@@ -365,9 +365,9 @@ void PurityModel::saveMetrics()
     string filename;
 
 #ifdef _WIN32
-    filename = "../../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";;
+    filename = "../../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";
 #else
-    filename = "../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";;
+    filename = "../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";
 #endif
 
     // check file or create

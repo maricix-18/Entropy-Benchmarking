@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int qubits = 3;
-    int max_depth = 15;
+    int max_depth = 5;
 
     int backend_choice;
     int protocol;
@@ -19,20 +19,24 @@ int main(int argc, char* argv[]) {
     unique_ptr<Backend> backend_ptr;
     unique_ptr<Protocol> protocol_ptr;
 
-    cout << "Hello, Entropy Benchmarking!" << endl;
+    // cout << "Hello, Entropy Benchmarking!" << endl;
         
-    cout << " Choose a simulation or protocol:" << endl;
-    cout << " 1 Density Matrix" << endl;
-    cout << " 2 Classical Shadows" << endl;
-    cout << " 3 Swap Test" << endl;
-    cout << " 4 Purity Model" << endl;
-    cout << " Input the number of the protocol you want to use: ";
-    cin >> protocol;
+    // cout << " Choose a simulation or protocol:" << endl;
+    // cout << " 1 Density Matrix" << endl;
+    // cout << " 2 Classical Shadows" << endl;
+    // cout << " 3 Swap Test" << endl;
+    // cout << " 4 Purity Model" << endl;
+    // cout << " Input the number of the protocol you want to use: ";
+    // cin >> protocol;
 
-    cout << " Choose Backend: " << endl;
-    cout << " 1 Simulator" << endl;
-    cout << " Input the number of the backend you want to use: ";
-    cin >> backend_choice;
+    // cout << " Choose Backend: " << endl;
+    // cout << " 1 Simulator" << endl;
+    // cout << " Input the number of the backend you want to use: ";
+    // cin >> backend_choice;
+
+    // NO user input, force density matrix and simulator
+    protocol = 1;
+    backend_choice = 1;
 
     if (backend_choice == 1) {
         cout << "Simulator backend chosen." << endl;
@@ -117,17 +121,25 @@ int main(int argc, char* argv[]) {
         protocol_ptr = make_unique<DensityMatrix>();
     }
    
-    protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
-
-    for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+    for (int qub = 8; qub <= 17; qub++)
     {
-        cout << " - Depth " << curr_depth << endl;
-        protocol_ptr->setQureg();
-        protocol_ptr->buildCircuit(curr_depth);
-        protocol_ptr->metrics();
+        cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+        protocol_ptr->initialise(*backend_ptr, qub, max_depth);
+
+        for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+        {
+            cout << " - Depth " << curr_depth << endl;
+            protocol_ptr->setQureg();
+            protocol_ptr->buildCircuit(curr_depth);
+            protocol_ptr->metrics();
+            protocol_ptr->destroy();
+        }
+        
+        // Save all metrics for this qubit size after all depths are processed
         protocol_ptr->saveMetrics();
-        protocol_ptr->destroy();
+        cout << "Completed Q" << qub << endl;
     }
+    
    
     return 0;
 }
