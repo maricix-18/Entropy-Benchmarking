@@ -85,8 +85,8 @@ void PurityModel::purityModel_globalDP()
 
 };
 
-// alpha_1 = p1, alpha_2 = p2
-double PurityModel::purityModel_globalDP_p1_p2_value(double &depth, double &p_1, double &p_2) {
+// New variant
+double PurityModel::purityModel_p1_p2_value(double &depth, double &p_1, double &p_2) {
     double alpha_1 = p_1;
     double alpha_2 = p_2;
 
@@ -94,17 +94,19 @@ double PurityModel::purityModel_globalDP_p1_p2_value(double &depth, double &p_1,
     return pur;
 }
 
-double PurityModel::purityModel_globalDP_R2d_model_part_eval_p1_p2(double &depth, double &alpha_1, double &alpha_2) {
-    double R2d = -1 * log2(purityModel_globalDP_value(depth, alpha_1, alpha_2)) / _qubits;
+double PurityModel::purityModel_p1_p2_R2d_model_part_eval(double &depth, double &p_2) {
+    double c = p1_local/p2_local;
+    double p_1 = p_2 * c;
+    double R2d = -1 * log2(purityModel_p1_p2_value(depth,p_1, p_2)) / _qubits;
     return R2d;
-};
+}
 
-void PurityModel::purityModel_globalDP_p1_p2() {
-    cout << "purityModel_globalDP_p1_p2" << endl;
+void PurityModel::purityModel_p1_p2()
+{
+    cout << "purityModel_p1_p2"<< endl;
     // get short metrics for the experiment -- density matrix values
     string file_path = find_file_DM();
     ifstream file(file_path);
-
     if (!file.is_open()) {
         cerr << "Error: could not open file.\n";
     }
@@ -118,7 +120,7 @@ void PurityModel::purityModel_globalDP_p1_p2() {
 
     depth_tab_populate();
     depth_tab_more_points_populate();
-
+    double c = p1_local/p2_local;
     // fit curve based on data
     Eigen::VectorXd p0(2);
     p0 << 0.5, 0.5; // initial guess
@@ -127,23 +129,23 @@ void PurityModel::purityModel_globalDP_p1_p2() {
     lb << 0.0, 0.0; // lower bounds
     ub << 1.0, 1.0; // upper bounds
 
-    int params_to_fit = 2;
-    name_model = "purity_model_globalDP_p1_p2";
-
+    int params_to_fit = 1;
+    name_model = "purity_model_p1_p2";
     auto [popt, pcov] = curve_fit_eigen(depth_tab, all_R2d_results["all_R2d_diff_n"], p0,lb,ub, params_to_fit);
 
-    double alpha_1_optim_classim = popt[0];
-    double alpha_2_optim_classim = popt[1];
-
+    double alpha_1_optim_classim = popt[0] * c;
+    double alpha_2_optim_classim = popt[0];
     fitted_params.push_back(make_pair("alpha_1_optim_classim", alpha_1_optim_classim));
     fitted_params.push_back(make_pair("alpha_2_optim_classim", alpha_2_optim_classim));
 
     for (double d : depth_tab_more_points) {
-        double pur = purityModel_globalDP_p1_p2_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
+        double pur = purityModel_p1_p2_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
+        double R2d = -1 * log2(pur)/ _qubits;
         all_pur.push_back(pur);
-        all_R2d.push_back(-1 * log2(pur) / _qubits);
+        all_R2d.push_back(R2d);
     }
 };
+//
 
 double PurityModel::purityModel_globalDP_localDP_value(double &depth, double &p_1, double &p_2) {
     double alpha_1 = log(1/(1-p_1));

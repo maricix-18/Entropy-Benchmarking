@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int qubits = 3;
-    int max_depth = 5;
+    int max_depth = 15;
 
     int backend_choice;
     int protocol;
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     // cin >> backend_choice;
 
     // NO user input, force density matrix and simulator
-    protocol = 1;
+    protocol = 4;
     backend_choice = 1;
 
     if (backend_choice == 1) {
@@ -69,50 +69,61 @@ int main(int argc, char* argv[]) {
     }
     else if (protocol == 4)
     {
+        // experiment for multiple qubit size
 
         cout << "Purity Model." << endl;
         PurityModel purity_model;
 
-        purity_model.initialise(*backend_ptr, qubits, max_depth);
-
-        int pur_model;
-
-        cout << " Choose a purity model:" << endl;
-        cout << " 1 Purity model based on global depolarising noise model." << endl;
-        cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
-        cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
-        cout << " 4 Purity model based on global depolarising noise model + alpha_1 = p1, alpha_2 = p2" << endl;
-        cout << " Input the number of the protocol you want to use: ";
-        cin >> pur_model;
-
-        if (pur_model == 1)
+        for (int qub = 4; qub < 5; qub++)
         {
-            purity_model.purityModel_globalDP();
+            cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+            purity_model.initialise(*backend_ptr, qub, max_depth);
+
+            purity_model.purityModel_p1_p2();
             purity_model.saveMetrics();
+            
+            // Save all metrics for this qubit size after all depths are processed
+            cout << "Completed Q" << qub << endl;
         }
-        else if (pur_model == 2)
-        {
-            purity_model.purityModel_globalDP_localDP();
-            purity_model.saveMetrics();
-        }
-        else if (pur_model == 3)
-        {
+       
 
-            purity_model.purityModel_globalDP_CS();
-            purity_model.saveMetrics();
-        }
-        else if (pur_model == 4)
-        {
+        // int pur_model;
 
-            purity_model.purityModel_globalDP_p1_p2();
-            purity_model.saveMetrics();
-        }
-        else
-        {
-            cout << "Invalid choice - Default - 1 Purity model based on global depolarising noise model." << endl;
-        }
+        // // cout << " Choose a purity model:" << endl;
+        // // cout << " 1 Purity model based on global depolarising noise model." << endl;
+        // // cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
+        // // cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
+        // // cout << " 4 Purity model based on global depolarising noise model + alpha_1 = p1, alpha_2 = p2" << endl;
+        // // cout << " Input the number of the protocol you want to use: ";
+        // // cin >> pur_model;
+        // if (pur_model == 1)
+        // {
+        //     purity_model.purityModel_globalDP();
+        //     purity_model.saveMetrics();
+        // }
+        // else if (pur_model == 2)
+        // {
+        //     purity_model.purityModel_globalDP_localDP();
+        //     purity_model.saveMetrics();
+        // }
+        // else if (pur_model == 3)
+        // {
 
-        cout << "All done." << endl;
+        //     purity_model.purityModel_globalDP_CS();
+        //     purity_model.saveMetrics();
+        // }
+        // else if (pur_model == 4)
+        // {
+
+        //     purity_model.purityModel_globalDP_p1_p2();
+        //     purity_model.saveMetrics();
+        // }
+        // else
+        // {
+        //     cout << "Invalid choice - Default - 1 Purity model based on global depolarising noise model." << endl;
+        // }
+
+        // cout << "All done." << endl;
         return 0;
     }
     else
