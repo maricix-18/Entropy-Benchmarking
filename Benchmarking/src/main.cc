@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
     int qubits = 3;
-    int max_depth = 15;
+    int max_depth = 5;
 
     int backend_choice;
     int protocol;
@@ -74,12 +74,11 @@ int main(int argc, char* argv[]) {
         cout << "Purity Model." << endl;
         PurityModel purity_model;
 
-        for (int qub = 4; qub < 5; qub++)
+        for (int qub = 2; qub < 18; qub++)
         {
             cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
             purity_model.initialise(*backend_ptr, qub, max_depth);
-
-            purity_model.purityModel_p1_p2();
+            purity_model.purityModel_p1_p2_wi();
             purity_model.saveMetrics();
             
             // Save all metrics for this qubit size after all depths are processed

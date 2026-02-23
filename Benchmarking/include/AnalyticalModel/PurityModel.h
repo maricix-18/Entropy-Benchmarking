@@ -51,18 +51,19 @@ public:
 
     double purity_model_globalDP_CS_circuit_measerr_part_eval(double &d, double &alpha_2, double &beta);
 
-    // global_DP with alpha_1 = p1, alpha_2 = p2
-    double purityModel_p1_p2_value(double &depth, double &p_1, double &p_2);
-
-    //double purityModel_globalDP_R2d_model_part_eval_p1_p2(double &d, double &alpha_1, double &alpha_2);
-
-    double purityModel_p1_p2_R2d_model_part_eval(double &d, double &alpha_2);
-
-    void purityModel_p1_p2();
-    //
     void depth_tab_more_points_populate();
 
     void depth_tab_populate();
+
+    //  p1 - p2 distance : with interpolation
+    double purityModel_p1_p2_value(double &depth, double &alpha_1, double &alpha_2);
+
+    double purityModel_p1_p2_R2d_model_part_eval(double &depth, double &alpha_1, double &alpha_2);
+
+    void purityModel_p1_p2();
+
+    // p1 - p2 distance : without interpolation (wi)
+    void purityModel_p1_p2_wi();
 
     vector<double> linspace(int start, int stop, int num);
 
@@ -101,10 +102,11 @@ public:
                     residuals[i] = ydata[i] - model_val;
                 }
             }
-            else if (model.name_model == "purity_model_p1_p2") {
-                double alpha_2 = params[0];
+            else if (model.name_model  == "purity_model_p1_p2") {
+                double alpha_1 = params[0];
+                double alpha_2 = params[1];
                 for (int i = 0; i < values(); i++) {
-                    double model_val = model.purityModel_p1_p2_R2d_model_part_eval(xdata[i],  alpha_2);
+                    double model_val = model.purityModel_p1_p2_R2d_model_part_eval(xdata[i], alpha_1, alpha_2);
                     residuals[i] = ydata[i] - model_val;
                 }
             }
