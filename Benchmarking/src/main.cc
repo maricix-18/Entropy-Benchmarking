@@ -10,33 +10,26 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 3;
-    int max_depth = 5;
-
     int backend_choice;
     int protocol;
 
     unique_ptr<Backend> backend_ptr;
     unique_ptr<Protocol> protocol_ptr;
 
-    // cout << "Hello, Entropy Benchmarking!" << endl;
+    cout << "Hello, Entropy Benchmarking!" << endl;
         
-    // cout << " Choose a simulation or protocol:" << endl;
-    // cout << " 1 Density Matrix" << endl;
-    // cout << " 2 Classical Shadows" << endl;
-    // cout << " 3 Swap Test" << endl;
-    // cout << " 4 Purity Model" << endl;
-    // cout << " Input the number of the protocol you want to use: ";
-    // cin >> protocol;
+    cout << " Choose a simulation or protocol:" << endl;
+    cout << " 1 Density Matrix" << endl;
+    cout << " 2 Classical Shadows" << endl;
+    cout << " 3 Swap Test" << endl;
+    cout << " 4 Purity Model" << endl;
+    cout << " Input the number of the protocol you want to use: ";
+    cin >> protocol;
 
-    // cout << " Choose Backend: " << endl;
-    // cout << " 1 Simulator" << endl;
-    // cout << " Input the number of the backend you want to use: ";
-    // cin >> backend_choice;
-
-    // NO user input, force density matrix and simulator
-    protocol = 4;
-    backend_choice = 1;
+    cout << " Choose Backend: " << endl;
+    cout << " 1 Simulator" << endl;
+    cout << " Input the number of the backend you want to use: ";
+    cin >> backend_choice;
 
     if (backend_choice == 1) {
         cout << "Simulator backend chosen." << endl;
@@ -70,59 +63,46 @@ int main(int argc, char* argv[]) {
     else if (protocol == 4)
     {
         // experiment for multiple qubit size
-
         cout << "Purity Model." << endl;
         PurityModel purity_model;
 
-        for (int qub = 2; qub < 18; qub++)
+        int pur_model;
+
+        cout << " Choose a purity model:" << endl;
+        cout << " 1 Purity model based on global depolarising noise model." << endl;
+        cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
+        cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
+        cout << " 4 Purity model based on global depolarising noise no fitting model + alpha_1 = p1, alpha_2 = p2" << endl;
+        cout << " Input the number of the protocol you want to use: ";
+        cin >> pur_model;
+        if (pur_model == 1)
         {
-            cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
-            purity_model.initialise(*backend_ptr, qub, max_depth);
-            purity_model.purityModel_p1_p2_wi();
+            purity_model.purityModel_globalDP();
             purity_model.saveMetrics();
-            
-            // Save all metrics for this qubit size after all depths are processed
-            cout << "Completed Q" << qub << endl;
         }
-       
+        else if (pur_model == 2)
+        {
+            purity_model.purityModel_globalDP_localDP();
+            purity_model.saveMetrics();
+        }
+        else if (pur_model == 3)
+        {
 
-        // int pur_model;
+            purity_model.purityModel_globalDP_CS();
+            purity_model.saveMetrics();
+        }
+        else if (pur_model == 4)
+        {
 
-        // // cout << " Choose a purity model:" << endl;
-        // // cout << " 1 Purity model based on global depolarising noise model." << endl;
-        // // cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
-        // // cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
-        // // cout << " 4 Purity model based on global depolarising noise model + alpha_1 = p1, alpha_2 = p2" << endl;
-        // // cout << " Input the number of the protocol you want to use: ";
-        // // cin >> pur_model;
-        // if (pur_model == 1)
-        // {
-        //     purity_model.purityModel_globalDP();
-        //     purity_model.saveMetrics();
-        // }
-        // else if (pur_model == 2)
-        // {
-        //     purity_model.purityModel_globalDP_localDP();
-        //     purity_model.saveMetrics();
-        // }
-        // else if (pur_model == 3)
-        // {
+            purity_model.purityModel_no_fitting();
+            purity_model.saveMetrics();
+        }
+        else
+        {
+            cout << "Invalid choice - Default - 1 Purity model based on global depolarising noise model." << endl;
+        }
 
-        //     purity_model.purityModel_globalDP_CS();
-        //     purity_model.saveMetrics();
-        // }
-        // else if (pur_model == 4)
-        // {
-
-        //     purity_model.purityModel_globalDP_p1_p2();
-        //     purity_model.saveMetrics();
-        // }
-        // else
-        // {
-        //     cout << "Invalid choice - Default - 1 Purity model based on global depolarising noise model." << endl;
-        // }
-
-        // cout << "All done." << endl;
+        cout << "All done." << endl;
         return 0;
     }
     else
@@ -130,8 +110,13 @@ int main(int argc, char* argv[]) {
         cout << "Invalid choice - Default Density Matrix." << endl;
         protocol_ptr = make_unique<DensityMatrix>();
     }
-   
-    for (int qub = 8; qub <= 17; qub++)
+
+    // Experiment values
+    int max_qubits = 10;
+    int max_depth = 5;
+
+    // experiment with multiple qubit sizes
+    for (int qub = 2; qub <= max_qubits; qub++)
     {
         cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
         protocol_ptr->initialise(*backend_ptr, qub, max_depth);
@@ -147,7 +132,7 @@ int main(int argc, char* argv[]) {
         
         // Save all metrics for this qubit size after all depths are processed
         protocol_ptr->saveMetrics();
-        cout << "Completed Q" << qub << endl;
+        cout << "Completed Experiment." << qub << endl;
     }
     
    

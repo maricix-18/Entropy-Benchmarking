@@ -85,65 +85,10 @@ void PurityModel::purityModel_globalDP()
 
 };
 
-// p1 - p2 distance : with interpolation
-double PurityModel::purityModel_p1_p2_value(double &depth, double &alpha_1, double &alpha_2) {
-    return (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* depth) - 1) + 1;
-}
-
-double PurityModel::purityModel_p1_p2_R2d_model_part_eval(double &depth, double &alpha_1, double &alpha_2) {
-    double R2d = -1 * log2(purityModel_p1_p2_value(depth, alpha_1, alpha_2)) / _qubits;
-    return R2d;
-}
-
-void PurityModel::purityModel_p1_p2(){
-    cout << "purityModel_p1_p2"<< endl;
-    // get short metrics for the experiment -- density matrix values
-    string file_path = find_file_DM();
-    ifstream file(file_path);
-
-    if (!file.is_open()) {
-        cerr << "Error: could not open file.\n";
-    }
-
-    json j;
-    file >> j;
-    map<string, vector<double>> all_R2d_results;
-    for (auto& [key, value] : j.items()) {
-        all_R2d_results[key] = value.get<vector<double>>();
-    }
-
-    depth_tab_populate();
-    depth_tab_more_points_populate();
-
-    // fit curve based on data
-    Eigen::VectorXd p0(2);
-    p0 << 0.5, 0.5; // initial guess
-
-    Eigen::VectorXd lb(2), ub(2);
-    lb << 0.0, 0.0; // lower bounds
-    ub << 1.0, 1.0; // upper bounds
-
-    int params_to_fit = 2;
-    name_model = "purity_model_p1_p2";
-    auto [popt, pcov] = curve_fit_eigen(depth_tab, all_R2d_results["all_R2d_diff_n"], p0, lb, ub, params_to_fit);
-
-    double alpha_1_optim_classim = popt[0];
-    double alpha_2_optim_classim = popt[1];
-    fitted_params.push_back(make_pair("alpha_1_optim_classim", alpha_1_optim_classim));
-    fitted_params.push_back(make_pair("alpha_2_optim_classim", alpha_2_optim_classim));
-    for (double d : depth_tab_more_points) {
-        double pur = purityModel_p1_p2_value(d, alpha_1_optim_classim, alpha_2_optim_classim);
-        double R2d = -1 * log2(pur)/ _qubits;
-        all_pur.push_back(pur);
-        all_R2d.push_back(R2d);
-    }
-
-}
-
 // p1 - p2 distance : without interpolation
-void PurityModel::purityModel_p1_p2_wi()
+void PurityModel:: purityModel_no_fitting()
 {
-    name_model = "purity_model_p1_p2_wi";
+    name_model = "purity_model_no_fitting";
     double alpha_1 = p1_local;
     double alpha_2 = p2_local;
     for (int d = 0; d <= _max_depth; d++) {

@@ -6,6 +6,8 @@ void  ClassicalShadows::somefunc() {
 
 void  ClassicalShadows::metrics()
 {
+    cout << fixed;
+    cout << setprecision(17);
 
     beta_vals_paulibasis(); // if pauli basis measurements are used 
 

@@ -33,18 +33,21 @@ protected:
 public:
     void initialise(Backend &_backend, int &qubits, int &max_depth);
 
+    // Global depolarising noise with interpolation
     void purityModel_globalDP();
 
     double purityModel_globalDP_value(double &depth, double &alpha_1, double &alpha_2);
 
     double purityModel_globalDP_R2d_model_part_eval(double &depth, double &alpha_2);
 
+    // Global depolarising noise with interpolation using an approximation of alpha1 and alpha2
     void purityModel_globalDP_localDP();
 
     double purityModel_globalDP_localDP_value(double &depth, double &alpha_1, double &alpha_2);
 
     double purityModel_globalDP_localDP_R2d_model_part_eval(double &depth, double &p_2);
 
+    // Global Depolarising noise with interpolation with CS + fitting read out errors (beta)
     void purityModel_globalDP_CS();
 
     double purity_model_globalDP_CS_circuit_measerr(double &d, double &alpha_1, double &alpha_2, double &beta);
@@ -55,15 +58,8 @@ public:
 
     void depth_tab_populate();
 
-    //  p1 - p2 distance : with interpolation
-    double purityModel_p1_p2_value(double &depth, double &alpha_1, double &alpha_2);
-
-    double purityModel_p1_p2_R2d_model_part_eval(double &depth, double &alpha_1, double &alpha_2);
-
-    void purityModel_p1_p2();
-
     // p1 - p2 distance : without interpolation (wi)
-    void purityModel_p1_p2_wi();
+    void purityModel_no_fitting();
 
     vector<double> linspace(int start, int stop, int num);
 
@@ -102,14 +98,7 @@ public:
                     residuals[i] = ydata[i] - model_val;
                 }
             }
-            else if (model.name_model  == "purity_model_p1_p2") {
-                double alpha_1 = params[0];
-                double alpha_2 = params[1];
-                for (int i = 0; i < values(); i++) {
-                    double model_val = model.purityModel_p1_p2_R2d_model_part_eval(xdata[i], alpha_1, alpha_2);
-                    residuals[i] = ydata[i] - model_val;
-                }
-            }
+
              return 0;
         }
     };
