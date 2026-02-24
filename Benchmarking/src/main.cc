@@ -10,8 +10,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 3;
-    int max_depth = 15;
+    int qubits = 10;
+    int max_depth = 5;
 
     int backend_choice;
     int protocol;
@@ -109,18 +109,38 @@ int main(int argc, char* argv[]) {
         cout << "Invalid choice - Default Density Matrix." << endl;
         protocol_ptr = make_unique<DensityMatrix>();
     }
-   
-    protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
 
-    for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+    for (int qub = 2; qub <= qubits; qub++)
     {
-        cout << " - Depth " << curr_depth << endl;
-        protocol_ptr->setQureg();
-        protocol_ptr->buildCircuit(curr_depth);
-        protocol_ptr->metrics();
+        cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+        protocol_ptr->initialise(*backend_ptr, qub, max_depth);
+
+        for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+        {
+            cout << " - Depth " << curr_depth << endl;
+            protocol_ptr->setQureg();
+            protocol_ptr->buildCircuit(curr_depth);
+            protocol_ptr->metrics();
+            protocol_ptr->destroy();
+        }
+
+        // Save all metrics for this qubit size after all depths are processed
         protocol_ptr->saveMetrics();
-        protocol_ptr->destroy();
+        cout << "Completed Q" << qub << endl;
     }
+
+
+    // protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
+    //
+    // for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+    // {
+    //     cout << " - Depth " << curr_depth << endl;
+    //     protocol_ptr->setQureg();
+    //     protocol_ptr->buildCircuit(curr_depth);
+    //     protocol_ptr->metrics();
+    //     protocol_ptr->saveMetrics();
+    //     protocol_ptr->destroy();
+    // }
    
     return 0;
 }
