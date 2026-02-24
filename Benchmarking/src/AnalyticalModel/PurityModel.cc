@@ -62,7 +62,7 @@ void PurityModel::purityModel_globalDP()
 
     // fit curve based on data
     Eigen::VectorXd p0(2);
-    p0 << 0.0, 1.0; // initial guess
+    p0 << 0.5, 0.5; // initial guess
 
     Eigen::VectorXd lb(2), ub(2);
     lb << 0.0, 0.0; // lower bounds
@@ -84,6 +84,20 @@ void PurityModel::purityModel_globalDP()
     }
 
 };
+
+// p1 - p2 distance : without interpolation
+void PurityModel:: purityModel_no_fitting()
+{
+    name_model = "purity_model_no_fitting";
+    double alpha_1 = p1_local;
+    double alpha_2 = p2_local;
+    for (int d = 0; d <= _max_depth; d++) {
+        double pur = (1 - pow(2,(-_qubits)))*(exp(-2*(2*alpha_1*_qubits + alpha_2 * (_qubits - 1))* d) - 1) + 1;
+        double R2d = -1 * log2(pur)/ _qubits;
+        all_pur.push_back(pur);
+        all_R2d.push_back(R2d);
+    }
+}
 
 double PurityModel::purityModel_globalDP_localDP_value(double &depth, double &p_1, double &p_2) {
     double alpha_1 = log(1/(1-p_1));
@@ -122,7 +136,7 @@ void PurityModel::purityModel_globalDP_localDP()
     double c = p1_local/p2_local;
     // fit curve based on data
     Eigen::VectorXd p0(2);
-    p0 << 0.0, 1.0; // initial guess
+    p0 << 0.5, 0.5; // initial guess
 
     Eigen::VectorXd lb(2), ub(2);
     lb << 0.0, 0.0; // lower bounds
@@ -146,7 +160,7 @@ void PurityModel::purityModel_globalDP_localDP()
 };
 
 double PurityModel::purity_model_globalDP_CS_circuit_measerr(double &d, double &alpha_1, double &alpha_2, double &beta) {
-
+    // done
     return (1 - pow(2,(-_qubits)))*(exp(-2*(alpha_1*_qubits*(2*d) + alpha_2*(_qubits-1)*d + beta*_qubits)) - 1) + 1;
 };
 
@@ -157,12 +171,11 @@ double PurityModel::purity_model_globalDP_CS_circuit_measerr_part_eval(double &d
     return purity_model_globalDP_CS_circuit_measerr( d, alpha_1, alpha_2, beta);
 };
 
-
-
 void PurityModel::purityModel_globalDP_CS()
 {
     cout << "purityModel_globalDP_CS" << endl;
     double c = p1_local/p2_local;
+
     depth_tab_populate();
     depth_tab_more_points_populate();
 
@@ -181,7 +194,7 @@ void PurityModel::purityModel_globalDP_CS()
     }
 
     Eigen::VectorXd p0(2);
-    p0 << 0.0, 1.0; // initial guess
+    p0 << 0.5, 0.5; // initial guess
 
     Eigen::VectorXd lb(2), ub(2);
     lb << 0.0, 0.0;
@@ -194,7 +207,6 @@ void PurityModel::purityModel_globalDP_CS()
     double alpha_1_optim_classim = popt[0] * c;
     double alpha_2_optim_classim = popt[0];
     double beta_optim_classim = popt[1];
-
     fitted_params.push_back(make_pair("alpha_1_optim_classim", alpha_1_optim_classim));
     fitted_params.push_back(make_pair("alpha_2_optim_classim", alpha_2_optim_classim));
     fitted_params.push_back(make_pair("beta_optim_classim", beta_optim_classim));
@@ -271,7 +283,7 @@ string PurityModel::find_file_CS() {
 #ifdef _WIN32
     directory = "../../Data_test/ClassicalShadows_metrics/";
 #else
-    directory = = "../Data_test/ClassicalShadows_metrics/";
+    directory = "../Data_test/ClassicalShadows_metrics/";
 #endif
 
     // Iterate over the files in the directory
@@ -294,7 +306,7 @@ string PurityModel::find_file_DM() {
 #ifdef _WIN32
     file_path = "../../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
 #else
-    file_path = = "../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
+    file_path = "../Data_test/DensityMatrices_metrics/Q"+ to_string(_qubits) +".json";
 #endif
 
     return file_path;
@@ -307,9 +319,9 @@ void PurityModel::saveMetrics()
     string filename;
 
 #ifdef _WIN32
-    filename = "../../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";;
+    filename = "../../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";
 #else
-    filename = "../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";;
+    filename = "../Data_test/AnalyticalModel_metrics/Q" + to_string(_qubits) + "_"+ name_model+".json";
 #endif
 
     // check file or create
@@ -345,6 +357,12 @@ void PurityModel::saveMetrics()
     ofstream out(filename);
     if (out.is_open())
         out << setw(4) << j << endl;
+
+    all_pur.clear();
+    all_R2d.clear();
+    depth_tab_more_points.clear();
+    depth_tab.clear();
+    fitted_params.clear();
 
 };
 

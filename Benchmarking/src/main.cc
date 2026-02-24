@@ -10,9 +10,6 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    int qubits = 3;
-    int max_depth = 2;
-
     int backend_choice;
     int protocol;
 
@@ -65,11 +62,9 @@ int main(int argc, char* argv[]) {
     }
     else if (protocol == 4)
     {
-
+        // experiment for multiple qubit size
         cout << "Purity Model." << endl;
         PurityModel purity_model;
-
-        purity_model.initialise(*backend_ptr, qubits, max_depth);
 
         int pur_model;
 
@@ -77,9 +72,9 @@ int main(int argc, char* argv[]) {
         cout << " 1 Purity model based on global depolarising noise model." << endl;
         cout << " 2 Purity model based on global depolarising noise model function of local depolarising probabilities." << endl;
         cout << " 3 Purity model based on global depolarising noise model + Classical Shadows." << endl;
+        cout << " 4 Purity model based on global depolarising noise no fitting model + alpha_1 = p1, alpha_2 = p2" << endl;
         cout << " Input the number of the protocol you want to use: ";
         cin >> pur_model;
-
         if (pur_model == 1)
         {
             purity_model.purityModel_globalDP();
@@ -96,6 +91,12 @@ int main(int argc, char* argv[]) {
             purity_model.purityModel_globalDP_CS();
             purity_model.saveMetrics();
         }
+        else if (pur_model == 4)
+        {
+
+            purity_model.purityModel_no_fitting();
+            purity_model.saveMetrics();
+        }
         else
         {
             cout << "Invalid choice - Default - 1 Purity model based on global depolarising noise model." << endl;
@@ -109,18 +110,31 @@ int main(int argc, char* argv[]) {
         cout << "Invalid choice - Default Density Matrix." << endl;
         protocol_ptr = make_unique<DensityMatrix>();
     }
-   
-    protocol_ptr->initialise(*backend_ptr, qubits, max_depth);
 
-    for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+    // Experiment values
+    int max_qubits = 10;
+    int max_depth = 5;
+
+    // experiment with multiple qubit sizes
+    for (int qub = 2; qub <= max_qubits; qub++)
     {
-        cout << " - Depth " << curr_depth << endl;
-        protocol_ptr->setQureg();
-        protocol_ptr->buildCircuit(curr_depth);
-        protocol_ptr->metrics();
+        cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+        protocol_ptr->initialise(*backend_ptr, qub, max_depth);
+
+        for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+        {
+            cout << " - Depth " << curr_depth << endl;
+            protocol_ptr->setQureg();
+            protocol_ptr->buildCircuit(curr_depth);
+            protocol_ptr->metrics();
+            protocol_ptr->destroy();
+        }
+
+        // Save all metrics for this qubit size after all depths are processed
         protocol_ptr->saveMetrics();
-        protocol_ptr->destroy();
+        cout << "Completed Experiment." << qub << endl;
     }
-   
+
+
     return 0;
 }

@@ -6,7 +6,8 @@ void  ClassicalShadows::somefunc() {
 
 void  ClassicalShadows::metrics()
 {
-    beta_vals_paulibasis(); // if pauli basis measurements are used
+
+    beta_vals_paulibasis(); // if pauli basis measurements are used 
 
     //for n samples do the protocol
     for (int n = 0; n < samples; n++)
@@ -34,8 +35,8 @@ void  ClassicalShadows::metrics()
 
     }// samples end
 
-    //Compute metrics
-   // mean purity
+    // Compute metrics
+    // mean purity
     double sum = accumulate(pur_samples.begin(), pur_samples.end(), 0.0);
     double pur_mean = sum / pur_samples.size();
     all_purity_mean.push_back(pur_mean);
