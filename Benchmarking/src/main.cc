@@ -77,13 +77,35 @@ int main(int argc, char* argv[]) {
         cin >> pur_model;
         if (pur_model == 1)
         {
-            purity_model.purityModel_globalDP();
-            purity_model.saveMetrics();
+            int max_depth = 5;
+            for (int qub = 8; qub <= 17; qub++)
+            {
+                cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+                purity_model.initialise(*backend_ptr, qub, max_depth);
+                purity_model.purityModel_globalDP();
+                purity_model.saveMetrics();
+
+                // Save all metrics for this qubit size after all depths are processed
+                cout << "Completed qubit: " << qub << endl;
+            }
+            // purity_model.purityModel_globalDP();
+            // purity_model.saveMetrics();
         }
         else if (pur_model == 2)
         {
-            purity_model.purityModel_globalDP_localDP();
-            purity_model.saveMetrics();
+            int max_depth = 15;
+            for (int qub = 2; qub <= 7; qub++)
+            {
+                cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+                purity_model.initialise(*backend_ptr, qub, max_depth);
+                purity_model.purityModel_globalDP_localDP();
+                purity_model.saveMetrics();
+
+                // Save all metrics for this qubit size after all depths are processed
+                cout << "Completed qubit: " << qub << endl;
+            }
+            // purity_model.purityModel_globalDP_localDP();
+            // purity_model.saveMetrics();
         }
         else if (pur_model == 3)
         {
@@ -94,8 +116,19 @@ int main(int argc, char* argv[]) {
         else if (pur_model == 4)
         {
 
-            purity_model.purityModel_no_fitting();
-            purity_model.saveMetrics();
+            int max_depth = 15;
+            for (int qub = 2; qub <= 15; qub++)
+            {
+                cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+                purity_model.initialise(*backend_ptr, qub, max_depth);
+                purity_model.purityModel_no_fitting();
+                purity_model.saveMetrics();
+
+                // Save all metrics for this qubit size after all depths are processed
+                cout << "Completed qubit: " << qub << endl;
+            }
+            // purity_model.purityModel_no_fitting();
+            // purity_model.saveMetrics();
         }
         else
         {
@@ -112,28 +145,28 @@ int main(int argc, char* argv[]) {
     }
 
     // Experiment values
-    int max_qubits = 10;
-    int max_depth = 5;
-
-    // experiment with multiple qubit sizes
-    for (int qub = 2; qub <= max_qubits; qub++)
-    {
-        cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
-        protocol_ptr->initialise(*backend_ptr, qub, max_depth);
-
-        for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
-        {
-            cout << " - Depth " << curr_depth << endl;
-            protocol_ptr->setQureg();
-            protocol_ptr->buildCircuit(curr_depth);
-            protocol_ptr->metrics();
-            protocol_ptr->destroy();
-        }
-
-        // Save all metrics for this qubit size after all depths are processed
-        protocol_ptr->saveMetrics();
-        cout << "Completed Experiment." << qub << endl;
-    }
+    // int max_qubits = 8;
+    // int max_depth = 5;
+    //
+    // // experiment with multiple qubit sizes
+    // for (int qub = 2; qub <= max_qubits; qub++)
+    // {
+    //     cout << "\n=== Running experiment for Q" << qub << " ===" << endl;
+    //     protocol_ptr->initialise(*backend_ptr, qub, max_depth);
+    //
+    //     for (int curr_depth = 0; curr_depth <= max_depth; curr_depth++)
+    //     {
+    //         cout << " - Depth " << curr_depth << endl;
+    //         protocol_ptr->setQureg();
+    //         protocol_ptr->buildCircuit(curr_depth);
+    //         protocol_ptr->metrics();
+    //         protocol_ptr->destroy();
+    //     }
+    //
+    //     // Save all metrics for this qubit size after all depths are processed
+    //     protocol_ptr->saveMetrics();
+    //     cout << "Completed Experiment." << qub << endl;
+    // }
 
 
     return 0;
