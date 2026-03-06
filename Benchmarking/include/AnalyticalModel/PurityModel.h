@@ -31,6 +31,7 @@ protected:
     vector<pair<string, double>> fitted_params;
 
 public:
+
     void initialise(Backend &_backend, int &qubits, int &max_depth);
 
     // Global depolarising noise with interpolation
@@ -58,7 +59,7 @@ public:
 
     void depth_tab_populate();
 
-    // p1 - p2 distance : without interpolation (wi)
+    // p1 - p2 without interpolation
     void purityModel_no_fitting();
 
     vector<double> linspace(int start, int stop, int num);

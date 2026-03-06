@@ -6,7 +6,6 @@ void  ClassicalShadows::somefunc() {
 
 void  ClassicalShadows::metrics()
 {
-
     beta_vals_paulibasis(); // if pauli basis measurements are used 
 
     //for n samples do the protocol
